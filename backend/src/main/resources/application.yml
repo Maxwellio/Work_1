@@ -1,0 +1,14 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: patrubki-backend
+  # datasource — подключить при переходе к Фазе 2 / БД
+  # datasource:
+  #   url: jdbc:postgresql://localhost:5432/...
+  #   username: ...
+  #   password: ...
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: validate
