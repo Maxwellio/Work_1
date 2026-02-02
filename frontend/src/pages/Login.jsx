@@ -72,6 +72,7 @@ function Login() {
               disabled={submitting}
             />
           </label>
+          <p className="login-hint">Проверяйте вводимые данные</p>
           {error && <p className="login-error" role="alert">{error}</p>}
           <button type="submit" className="login-submit" disabled={submitting}>
             {submitting ? 'Вход…' : 'Войти'}
