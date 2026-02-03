@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { login as apiLogin } from '../api'
@@ -7,6 +7,7 @@ import './Login.css'
 /**
  * Страница входа: форма логин/пароль, вызов POST /api/login (form-urlencoded),
  * после успеха — getCurrentUser и редирект на /.
+ * При заходе на /login авторизованного пользователя — проверка сессии и редирект на главную.
  */
 function Login() {
   const navigate = useNavigate()
@@ -15,6 +16,25 @@ function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [sessionChecked, setSessionChecked] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchUser().then((u) => {
+      if (!cancelled) setSessionChecked(true)
+    })
+    return () => { cancelled = true }
+  }, [fetchUser])
+
+  if (!sessionChecked) {
+    return (
+      <div className="login-page">
+        <div className="login-card">
+          <p className="login-hint">Проверка авторизации…</p>
+        </div>
+      </div>
+    )
+  }
 
   if (user) {
     return <Navigate to="/" replace />

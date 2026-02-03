@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import patrubki.entity.UserEntity;
 import patrubki.repository.UserRepository;
 
@@ -30,6 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity entity = userRepository.findByUsernameAndActive(username, 1)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found or inactive: " + username));

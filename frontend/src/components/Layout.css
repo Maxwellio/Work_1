@@ -48,5 +48,8 @@
 
 .layout-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   padding: 1.5rem;
 }
