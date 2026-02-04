@@ -1,0 +1,169 @@
+package patrubki.dto;
+
+import java.math.BigDecimal;
+
+public class MakeSubstituteMainDto {
+
+    private Integer idSubstitutePrepared;
+    private Integer idPreform;
+    private String name;
+    private BigDecimal dPreformOut;
+    private BigDecimal dPreformIn;
+    private BigDecimal ph;
+    private BigDecimal lPreform;
+    private BigDecimal massPreform;
+    private BigDecimal tSum;
+    private BigDecimal dSubstituteOut;
+    private BigDecimal dSubstituteIn;
+    private BigDecimal lSubstiute;
+    private String nmSub1;
+    private String nmSub2;
+    private String nmSub3;
+    private String nmSub4;
+    private String nmSub5;
+    private Integer idUserCreator;
+
+    public Integer getIdSubstitutePrepared() {
+        return idSubstitutePrepared;
+    }
+
+    public void setIdSubstitutePrepared(Integer idSubstitutePrepared) {
+        this.idSubstitutePrepared = idSubstitutePrepared;
+    }
+
+    public Integer getIdPreform() {
+        return idPreform;
+    }
+
+    public void setIdPreform(Integer idPreform) {
+        this.idPreform = idPreform;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getDPreformOut() {
+        return dPreformOut;
+    }
+
+    public void setDPreformOut(BigDecimal dPreformOut) {
+        this.dPreformOut = dPreformOut;
+    }
+
+    public BigDecimal getDPreformIn() {
+        return dPreformIn;
+    }
+
+    public void setDPreformIn(BigDecimal dPreformIn) {
+        this.dPreformIn = dPreformIn;
+    }
+
+    public BigDecimal getPh() {
+        return ph;
+    }
+
+    public void setPh(BigDecimal ph) {
+        this.ph = ph;
+    }
+
+    public BigDecimal getLPreform() {
+        return lPreform;
+    }
+
+    public void setLPreform(BigDecimal lPreform) {
+        this.lPreform = lPreform;
+    }
+
+    public BigDecimal getMassPreform() {
+        return massPreform;
+    }
+
+    public void setMassPreform(BigDecimal massPreform) {
+        this.massPreform = massPreform;
+    }
+
+    public BigDecimal getTSum() {
+        return tSum;
+    }
+
+    public void setTSum(BigDecimal tSum) {
+        this.tSum = tSum;
+    }
+
+    public BigDecimal getDSubstituteOut() {
+        return dSubstituteOut;
+    }
+
+    public void setDSubstituteOut(BigDecimal dSubstituteOut) {
+        this.dSubstituteOut = dSubstituteOut;
+    }
+
+    public BigDecimal getDSubstituteIn() {
+        return dSubstituteIn;
+    }
+
+    public void setDSubstituteIn(BigDecimal dSubstituteIn) {
+        this.dSubstituteIn = dSubstituteIn;
+    }
+
+    public BigDecimal getLSubstiute() {
+        return lSubstiute;
+    }
+
+    public void setLSubstiute(BigDecimal lSubstiute) {
+        this.lSubstiute = lSubstiute;
+    }
+
+    public String getNmSub1() {
+        return nmSub1;
+    }
+
+    public void setNmSub1(String nmSub1) {
+        this.nmSub1 = nmSub1;
+    }
+
+    public String getNmSub2() {
+        return nmSub2;
+    }
+
+    public void setNmSub2(String nmSub2) {
+        this.nmSub2 = nmSub2;
+    }
+
+    public String getNmSub3() {
+        return nmSub3;
+    }
+
+    public void setNmSub3(String nmSub3) {
+        this.nmSub3 = nmSub3;
+    }
+
+    public String getNmSub4() {
+        return nmSub4;
+    }
+
+    public void setNmSub4(String nmSub4) {
+        this.nmSub4 = nmSub4;
+    }
+
+    public String getNmSub5() {
+        return nmSub5;
+    }
+
+    public void setNmSub5(String nmSub5) {
+        this.nmSub5 = nmSub5;
+    }
+
+    public Integer getIdUserCreator() {
+        return idUserCreator;
+    }
+
+    public void setIdUserCreator(Integer idUserCreator) {
+        this.idUserCreator = idUserCreator;
+    }
+}

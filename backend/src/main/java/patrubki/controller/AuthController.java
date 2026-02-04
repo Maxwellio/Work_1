@@ -8,12 +8,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import patrubki.dto.CurrentUserDto;
+import patrubki.repository.UserRepository;
 
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class AuthController {
+
+    private final UserRepository userRepository;
+
+    public AuthController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     /**
      * Возвращает текущего пользователя по сессии или 401.
@@ -29,6 +36,11 @@ public class AuthController {
         var roles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new CurrentUserDto(username, roles));
+        
+        Integer userId = userRepository.findByUsername(username)
+                .map(user -> user.getUsersId())
+                .orElse(null);
+        
+        return ResponseEntity.ok(new CurrentUserDto(username, roles, userId));
     }
 }

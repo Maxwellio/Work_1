@@ -35,6 +35,11 @@
   background: var(--color-blue-dark);
 }
 
+.home-toolbar-btn_active {
+  background: var(--color-blue-dark);
+  font-weight: 600;
+}
+
 .home-toolbar-search {
   margin-left: auto;
   padding: 0.4rem 0.75rem;
@@ -87,6 +92,16 @@
   border: 1px solid var(--color-sand);
   border-radius: 4px;
   background: var(--color-white);
+}
+
+.home-table-message {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.home-table-message_error {
+  color: #c00;
 }
 
 .home-table {

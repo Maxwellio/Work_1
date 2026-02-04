@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { getSubstitutes, getFittings, getHydrotests } from '../api'
+import { useAuth } from '../context/AuthContext'
 import './Home.css'
 
 const TABS = [
@@ -8,17 +10,107 @@ const TABS = [
   { id: 3, label: 'Гидроиспытания' },
 ]
 
-const TABLE_HEADERS = {
-  0: ['№', 'Наименование', 'Тип', 'Диаметр'],
-  1: ['№', 'Наименование', 'Размер', 'Материал'],
-  2: ['№', 'Наименование', 'Длина', 'Диаметр'],
-  3: ['№', 'Дата', 'Объект', 'Результат'],
+const COLUMNS = {
+  0: [
+    { key: 'idSubstitutePrepared', label: '№' },
+    { key: 'name', label: 'Наименование' },
+    { key: 'dPreformOut', label: 'D предформ. нар.' },
+    { key: 'dPreformIn', label: 'D предформ. вн.' },
+    { key: 'dSubstituteOut', label: 'D переходника нар.' },
+    { key: 'dSubstituteIn', label: 'D переходника вн.' },
+    { key: 'lSubstiute', label: 'L переходника' },
+  ],
+  1: [
+    { key: 'idFiting', label: '№' },
+    { key: 'nm', label: 'Наименование' },
+    { key: 'd', label: 'D' },
+    { key: 'th', label: 'Толщ.' },
+    { key: 'mass', label: 'Масса' },
+    { key: 'l', label: 'L' },
+  ],
+  2: [
+    { key: 'idFiting', label: '№' },
+    { key: 'nm', label: 'Наименование' },
+    { key: 'd', label: 'D' },
+    { key: 'th', label: 'Толщ.' },
+    { key: 'mass', label: 'Масса' },
+    { key: 'l', label: 'L' },
+  ],
+  3: [
+    { key: 'idHydrotest', label: '№' },
+    { key: 'nh', label: 'Наименование' },
+    { key: 'd', label: 'D' },
+    { key: 'l', label: 'L' },
+    { key: 'th', label: 'Толщ.' },
+    { key: 'testtime', label: 'Время исп.' },
+    { key: 'mass', label: 'Масса' },
+  ],
+}
+
+const DEBOUNCE_MS = 350
+
+function getRowId(row, activeTab) {
+  if (activeTab === 0) return row.idSubstitutePrepared
+  if (activeTab === 1 || activeTab === 2) return row.idFiting
+  return row.idHydrotest
+}
+
+function formatCell(value) {
+  if (value == null) return '—'
+  if (typeof value === 'number' || typeof value === 'string') return String(value)
+  return String(value)
 }
 
 function Home() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState(0)
   const [selectedRowId, setSelectedRowId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [showMyRecords, setShowMyRecords] = useState(false)
+  const [listData, setListData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(searchQuery), DEBOUNCE_MS)
+    return () => clearTimeout(t)
+  }, [searchQuery])
+
+  const loadData = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const userId = showMyRecords && user?.userId ? user.userId : null
+      if (activeTab === 0) {
+        const data = await getSubstitutes(debouncedSearch, userId)
+        setListData(data)
+      } else if (activeTab === 1 || activeTab === 2) {
+        const data = await getFittings(activeTab === 1 ? 1 : 2, debouncedSearch, userId)
+        setListData(data)
+      } else {
+        const data = await getHydrotests(debouncedSearch, userId)
+        setListData(data)
+      }
+    } catch (e) {
+      setError(e.message || 'Ошибка загрузки')
+      setListData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [activeTab, debouncedSearch, showMyRecords, user])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  useEffect(() => {
+    setSelectedRowId(null)
+  }, [activeTab])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [activeTab])
 
   const handleCreateEdit = () => {
     console.log('Создать/Редактировать', { activeTab })
@@ -36,11 +128,7 @@ function Home() {
     console.log('Печать отчёта', { activeTab })
   }
 
-  const headers = TABLE_HEADERS[activeTab]
-  const stubRows = [
-    { id: 1, cells: ['1', '—', '—', '—'] },
-    { id: 2, cells: ['2', '—', '—', '—'] },
-  ]
+  const columns = COLUMNS[activeTab]
 
   return (
     <div className="home">
@@ -61,6 +149,13 @@ function Home() {
         </button>
         <button type="button" className="home-toolbar-btn" onClick={handlePrint}>
           Печать отчёта
+        </button>
+        <button
+          type="button"
+          className={`home-toolbar-btn ${showMyRecords ? 'home-toolbar-btn_active' : ''}`}
+          onClick={() => setShowMyRecords(!showMyRecords)}
+        >
+          Мои записи
         </button>
         <input
           type="search"
@@ -86,28 +181,41 @@ function Home() {
       </div>
 
       <div className="home-table-wrap">
-        <table className="home-table">
-          <thead>
-            <tr>
-              {headers.map((h) => (
-                <th key={h}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {stubRows.map((row) => (
-              <tr
-                key={row.id}
-                className={selectedRowId === row.id ? 'home-table-row_selected' : ''}
-                onClick={() => setSelectedRowId(selectedRowId === row.id ? null : row.id)}
-              >
-                {row.cells.map((cell, i) => (
-                  <td key={i}>{cell}</td>
+        {error && (
+          <div className="home-table-message home-table-message_error">{error}</div>
+        )}
+        {loading && (
+          <div className="home-table-message">Загрузка…</div>
+        )}
+        {!loading && !error && (
+          <table className="home-table">
+            <thead>
+              <tr>
+                {columns.map((col) => (
+                  <th key={col.key}>{col.label}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {listData.map((row, index) => {
+                const id = getRowId(row, activeTab)
+                return (
+                  <tr
+                    key={id}
+                    className={selectedRowId === id ? 'home-table-row_selected' : ''}
+                    onClick={() => setSelectedRowId(selectedRowId === id ? null : id)}
+                  >
+                    {columns.map((col) => (
+                      <td key={col.key}>
+                        {formatCell(row[col.key])}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
