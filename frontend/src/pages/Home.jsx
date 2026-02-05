@@ -124,8 +124,35 @@ function Home() {
   const handleCalcNorms = () => {
     console.log('Расчёт норм времени', { activeTab })
   }
-  const handlePrint = () => {
-    console.log('Печать отчёта', { activeTab })
+  const handlePrint = async () => {
+    if (selectedRowId == null) {
+      alert('Для генерации отчёта нужно выбрать запись.')
+      return
+    }
+    const API_BASE = '/api'
+    let path
+    if (activeTab === 0) path = `${API_BASE}/downloadReportSub?id=${selectedRowId}`
+    else if (activeTab === 1 || activeTab === 2) path = `${API_BASE}/downloadReportFit?id=${selectedRowId}`
+    else path = `${API_BASE}/downloadReportHydro?id=${selectedRowId}`
+    try {
+      const res = await fetch(path, { credentials: 'include' })
+      if (!res.ok) throw new Error('Ошибка загрузки отчёта')
+      const blob = await res.blob()
+      const disposition = res.headers.get('Content-Disposition')
+      let filename = 'report.pdf'
+      if (disposition) {
+        const match = disposition.match(/filename="?([^";\n]+)"?/i)
+        if (match) filename = match[1].trim()
+      }
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      alert(e.message || 'Не удалось скачать отчёт')
+    }
   }
 
   const columns = COLUMNS[activeTab]
