@@ -105,3 +105,59 @@ export async function getHydrotests(search, userId) {
   if (!res.ok) throw new Error('getHydrotests failed: ' + res.status)
   return res.json()
 }
+
+/**
+ * GET /api/preform-types — список типов заготовок.
+ * @returns {Promise<Array>}
+ */
+export async function getPreformTypes() {
+  const res = await fetch(`${API_BASE}/preform-types`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('getPreformTypes failed: ' + res.status)
+  return res.json()
+}
+
+/**
+ * DELETE /api/substitutes/{id}
+ */
+export async function deleteSubstitute(id) {
+  const res = await fetch(`${API_BASE}/substitutes/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка удаления')
+  }
+}
+
+/**
+ * DELETE /api/fittings/{id}
+ */
+export async function deleteFitting(id) {
+  const res = await fetch(`${API_BASE}/fittings/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка удаления')
+  }
+}
+
+/**
+ * DELETE /api/hydrotests/{id}
+ */
+export async function deleteHydrotest(id) {
+  const res = await fetch(`${API_BASE}/hydrotests/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка удаления')
+  }
+}

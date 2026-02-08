@@ -6,6 +6,7 @@ public class FitingDto {
 
     private Integer idFiting;
     private Integer idPreform;
+    private String nmPreform;
     private String nm;
     private BigDecimal tip;
     private BigDecimal d;
@@ -33,6 +34,14 @@ public class FitingDto {
 
     public void setIdPreform(Integer idPreform) {
         this.idPreform = idPreform;
+    }
+
+    public String getNmPreform() {
+        return nmPreform;
+    }
+
+    public void setNmPreform(String nmPreform) {
+        this.nmPreform = nmPreform;
     }
 
     public String getNm() {

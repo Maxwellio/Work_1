@@ -6,6 +6,7 @@ public class MakeSubstituteMainDto {
 
     private Integer idSubstitutePrepared;
     private Integer idPreform;
+    private String nmPreform;
     private String name;
     private BigDecimal dPreformOut;
     private BigDecimal dPreformIn;
@@ -37,6 +38,14 @@ public class MakeSubstituteMainDto {
 
     public void setIdPreform(Integer idPreform) {
         this.idPreform = idPreform;
+    }
+
+    public String getNmPreform() {
+        return nmPreform;
+    }
+
+    public void setNmPreform(String nmPreform) {
+        this.nmPreform = nmPreform;
     }
 
     public String getName() {

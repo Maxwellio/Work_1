@@ -1,6 +1,8 @@
 package patrubki.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import patrubki.dto.HydrotestDto;
 import patrubki.entity.Hydrotest;
 import patrubki.repository.HydrotestRepository;
@@ -29,6 +31,13 @@ public class HydrotestService {
         return repository.findAllOrderByNhAsc(searchParam, userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteById(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        repository.deleteById(id);
     }
 
     private HydrotestDto toDto(Hydrotest e) {

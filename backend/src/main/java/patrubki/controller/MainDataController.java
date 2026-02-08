@@ -1,16 +1,20 @@
 package patrubki.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import patrubki.dto.FitingDto;
 import patrubki.dto.HydrotestDto;
 import patrubki.dto.MakeSubstituteMainDto;
+import patrubki.dto.PreformTypDto;
 import patrubki.service.FitingService;
 import patrubki.service.HydrotestService;
 import patrubki.service.MakeSubstituteMainService;
+import patrubki.service.PreformTypService;
 
 import java.util.List;
 
@@ -21,13 +25,16 @@ public class MainDataController {
     private final MakeSubstituteMainService substituteService;
     private final FitingService fitingService;
     private final HydrotestService hydrotestService;
+    private final PreformTypService preformTypService;
 
     public MainDataController(MakeSubstituteMainService substituteService,
                               FitingService fitingService,
-                              HydrotestService hydrotestService) {
+                              HydrotestService hydrotestService,
+                              PreformTypService preformTypService) {
         this.substituteService = substituteService;
         this.fitingService = fitingService;
         this.hydrotestService = hydrotestService;
+        this.preformTypService = preformTypService;
     }
 
     @GetMapping("/substitutes")
@@ -59,5 +66,28 @@ public class MainDataController {
             return ResponseEntity.ok(hydrotestService.findAllOrderByNh(search, userId));
         }
         return ResponseEntity.ok(hydrotestService.findAllOrderByNh(search));
+    }
+
+    @GetMapping("/preform-types")
+    public ResponseEntity<List<PreformTypDto>> getPreformTypes() {
+        return ResponseEntity.ok(preformTypService.findAllOrderByName());
+    }
+
+    @DeleteMapping("/substitutes/{id}")
+    public ResponseEntity<Void> deleteSubstitute(@PathVariable Integer id) {
+        substituteService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/fittings/{id}")
+    public ResponseEntity<Void> deleteFitting(@PathVariable Integer id) {
+        fitingService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/hydrotests/{id}")
+    public ResponseEntity<Void> deleteHydrotest(@PathVariable Integer id) {
+        hydrotestService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,9 +1,12 @@
 package patrubki.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import patrubki.dto.MakeSubstituteMainDto;
 import patrubki.entity.MakeSubstituteMain;
 import patrubki.repository.MakeSubstituteMainRepository;
+import patrubki.repository.PreformTypRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,9 +15,12 @@ import java.util.stream.Collectors;
 public class MakeSubstituteMainService {
 
     private final MakeSubstituteMainRepository repository;
+    private final PreformTypRepository preformTypRepository;
 
-    public MakeSubstituteMainService(MakeSubstituteMainRepository repository) {
+    public MakeSubstituteMainService(MakeSubstituteMainRepository repository,
+                                     PreformTypRepository preformTypRepository) {
         this.repository = repository;
+        this.preformTypRepository = preformTypRepository;
     }
 
     public List<MakeSubstituteMainDto> findAllOrderByName(String search) {
@@ -29,6 +35,13 @@ public class MakeSubstituteMainService {
         return repository.findAllOrderByName(searchParam, userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteById(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        repository.deleteById(id);
     }
 
     private String buildName(MakeSubstituteMain e) {
@@ -60,6 +73,9 @@ public class MakeSubstituteMainService {
         dto.setNmSub4(e.getNmSub4());
         dto.setNmSub5(e.getNmSub5());
         dto.setIdUserCreator(e.getIdUserCreator());
+        if (e.getIdPreform() != null) {
+            preformTypRepository.findById(e.getIdPreform()).ifPresent(p -> dto.setNmPreform(p.getNmPreform()));
+        }
         return dto;
     }
 }

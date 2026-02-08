@@ -1,9 +1,12 @@
 package patrubki.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import patrubki.dto.FitingDto;
 import patrubki.entity.Fiting;
 import patrubki.repository.FitingRepository;
+import patrubki.repository.PreformTypRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.stream.Collectors;
 public class FitingService {
 
     private final FitingRepository repository;
+    private final PreformTypRepository preformTypRepository;
 
-    public FitingService(FitingRepository repository) {
+    public FitingService(FitingRepository repository, PreformTypRepository preformTypRepository) {
         this.repository = repository;
+        this.preformTypRepository = preformTypRepository;
     }
 
     public List<FitingDto> findByTipOrderByNm(int tip, String search) {
@@ -30,6 +35,13 @@ public class FitingService {
         return repository.findByTipOrderByNmAsc(BigDecimal.valueOf(tip), searchParam, userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteById(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        repository.deleteById(id);
     }
 
     private FitingDto toDto(Fiting e) {
@@ -48,6 +60,9 @@ public class FitingService {
         dto.setTSum(e.getTSum());
         dto.setCnt(e.getCnt());
         dto.setIdUserCreator(e.getIdUserCreator());
+        if (e.getIdPreform() != null) {
+            preformTypRepository.findById(e.getIdPreform()).ifPresent(p -> dto.setNmPreform(p.getNmPreform()));
+        }
         return dto;
     }
 }
