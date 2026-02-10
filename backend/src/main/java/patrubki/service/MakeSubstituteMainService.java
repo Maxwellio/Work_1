@@ -1,26 +1,56 @@
 package patrubki.service;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import patrubki.dto.MakeSubstituteMainDto;
+import patrubki.dto.SubstituteSaveDto;
 import patrubki.entity.MakeSubstituteMain;
 import patrubki.repository.MakeSubstituteMainRepository;
 import patrubki.repository.PreformTypRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class MakeSubstituteMainService {
 
+    /** Заглушка: подставьте имя вашей процедуры в БД (схема substitute). */
+    private static final String SUBSTITUTE_UPSERT_PROCEDURE = "substitute.placeholder_upsert_substitute";
+
     private final MakeSubstituteMainRepository repository;
     private final PreformTypRepository preformTypRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     public MakeSubstituteMainService(MakeSubstituteMainRepository repository,
-                                     PreformTypRepository preformTypRepository) {
+                                     PreformTypRepository preformTypRepository,
+                                     JdbcTemplate jdbcTemplate) {
         this.repository = repository;
         this.preformTypRepository = preformTypRepository;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void saveSubstitute(SubstituteSaveDto dto) {
+        String sql = "CALL " + SUBSTITUTE_UPSERT_PROCEDURE + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql,
+                dto.getId(),
+                dto.getNmSub1(),
+                dto.getNmSub2(),
+                dto.getNmSub3(),
+                dto.getNmSub4(),
+                dto.getNmSub5(),
+                dto.getDSubstituteOut(),
+                dto.getDSubstituteIn(),
+                dto.getLSubstiute(),
+                dto.getIdPreform(),
+                dto.getDPreformOut(),
+                dto.getDPreformIn(),
+                dto.getLPreform(),
+                dto.getPh(),
+                dto.getMassPreform()
+        );
     }
 
     public List<MakeSubstituteMainDto> findAllOrderByName(String search) {

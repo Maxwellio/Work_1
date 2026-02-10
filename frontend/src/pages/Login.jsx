@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { login as apiLogin } from '../api'
-import './Login.css'
+import '../styles/Login.css'
 
 /**
  * Страница входа: форма логин/пароль, вызов POST /api/login (form-urlencoded),

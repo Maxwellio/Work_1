@@ -121,6 +121,25 @@ export async function getPreformTypes() {
 }
 
 /**
+ * POST /api/substitutes — добавление или редактирование переводника (вызов процедуры БД).
+ * @param {Object} payload — поля формы: id (опционально, для редактирования), nmSub1..nmSub5,
+ *   dSubstituteOut, dSubstituteIn, lSubstiute, idPreform, dPreformOut, dPreformIn, lPreform, ph, massPreform
+ * @returns {Promise<void>}
+ */
+export async function saveSubstitute(payload) {
+  const res = await fetch(`${API_BASE}/substitutes`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка сохранения')
+  }
+}
+
+/**
  * DELETE /api/substitutes/{id}
  */
 export async function deleteSubstitute(id) {

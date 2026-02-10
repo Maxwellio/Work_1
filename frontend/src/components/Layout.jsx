@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import './Layout.css'
+import '../styles/Layout.css'
 
 function Layout({ children }) {
   const navigate = useNavigate()

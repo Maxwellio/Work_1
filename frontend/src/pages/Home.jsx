@@ -4,12 +4,16 @@ import {
   getFittings,
   getHydrotests,
   getPreformTypes,
+  saveSubstitute,
   deleteSubstitute,
   deleteFitting,
   deleteHydrotest,
 } from '../api'
 import { useAuth } from '../context/AuthContext'
-import './Home.css'
+import HomeToolbar from '../components/HomeToolbar'
+import HomeTable from '../components/HomeTable'
+import SubstituteModal from '../components/SubstituteModal'
+import '../styles/Home.css'
 
 const TABS = [
   { id: 0, label: 'Переводники' },
@@ -32,7 +36,6 @@ const COLUMNS = {
   1: [
     { key: 'idFiting', label: '№' },
     { key: 'nm', label: 'Наименование' },
-    { key: 'nmPreform', label: 'Тип заготовки' },
     { key: 'd', label: 'D' },
     { key: 'th', label: 'Толщ.' },
     { key: 'mass', label: 'Масса' },
@@ -41,7 +44,6 @@ const COLUMNS = {
   2: [
     { key: 'idFiting', label: '№' },
     { key: 'nm', label: 'Наименование' },
-    { key: 'nmPreform', label: 'Тип заготовки' },
     { key: 'd', label: 'D' },
     { key: 'th', label: 'Толщ.' },
     { key: 'mass', label: 'Масса' },
@@ -73,23 +75,20 @@ function formatCell(value) {
 }
 
 const EMPTY_SUBSTITUTE_FORM = {
-  idSubstitutePrepared: '',
-  idPreform: '',
-  dPreformOut: '',
-  dPreformIn: '',
-  ph: '',
-  lPreform: '',
-  massPreform: '',
-  tSum: '',
-  dSubstituteOut: '',
-  dSubstituteIn: '',
-  lSubstiute: '',
   nmSub1: '',
   nmSub2: '',
   nmSub3: '',
   nmSub4: '',
   nmSub5: '',
-  idUserCreator: '',
+  dSubstituteOut: '',
+  dSubstituteIn: '',
+  lSubstiute: '',
+  idPreform: '',
+  dPreformOut: '',
+  dPreformIn: '',
+  lPreform: '',
+  ph: '',
+  massPreform: '',
 }
 
 function toInputValue(value) {
@@ -99,23 +98,20 @@ function toInputValue(value) {
 
 function mapSubstituteToForm(row) {
   return {
-    idSubstitutePrepared: toInputValue(row.idSubstitutePrepared),
-    idPreform: toInputValue(row.idPreform),
-    dPreformOut: toInputValue(row.dPreformOut),
-    dPreformIn: toInputValue(row.dPreformIn),
-    ph: toInputValue(row.ph),
-    lPreform: toInputValue(row.lPreform),
-    massPreform: toInputValue(row.massPreform),
-    tSum: toInputValue(row.tSum),
-    dSubstituteOut: toInputValue(row.dSubstituteOut),
-    dSubstituteIn: toInputValue(row.dSubstituteIn),
-    lSubstiute: toInputValue(row.lSubstiute),
     nmSub1: toInputValue(row.nmSub1),
     nmSub2: toInputValue(row.nmSub2),
     nmSub3: toInputValue(row.nmSub3),
     nmSub4: toInputValue(row.nmSub4),
     nmSub5: toInputValue(row.nmSub5),
-    idUserCreator: toInputValue(row.idUserCreator),
+    dSubstituteOut: toInputValue(row.dSubstituteOut),
+    dSubstituteIn: toInputValue(row.dSubstituteIn),
+    lSubstiute: toInputValue(row.lSubstiute),
+    idPreform: toInputValue(row.idPreform),
+    dPreformOut: toInputValue(row.dPreformOut),
+    dPreformIn: toInputValue(row.dPreformIn),
+    lPreform: toInputValue(row.lPreform),
+    ph: toInputValue(row.ph),
+    massPreform: toInputValue(row.massPreform),
   }
 }
 
@@ -132,7 +128,9 @@ function Home() {
   const [preformTypes, setPreformTypes] = useState([])
   const [preformError, setPreformError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
   const [formData, setFormData] = useState(EMPTY_SUBSTITUTE_FORM)
+  const [saveError, setSaveError] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(searchQuery), DEBOUNCE_MS)
@@ -193,13 +191,25 @@ function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [activeTab])
 
-  const handleCreateEdit = () => {
-    if (activeTab !== 0) {
-      console.log('Создать/Редактировать', { activeTab })
+  const handleAdd = () => {
+    if (activeTab !== 0) return
+    setSaveError(null)
+    setIsEditMode(false)
+    setFormData(EMPTY_SUBSTITUTE_FORM)
+    setIsModalOpen(true)
+  }
+
+  const handleEdit = () => {
+    if (activeTab !== 0) return
+    if (selectedRowId == null) {
+      alert('Выберите запись для редактирования')
       return
     }
     const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
-    setFormData(selectedRow ? mapSubstituteToForm(selectedRow) : EMPTY_SUBSTITUTE_FORM)
+    if (!selectedRow) return
+    setSaveError(null)
+    setIsEditMode(true)
+    setFormData(mapSubstituteToForm(selectedRow))
     setIsModalOpen(true)
   }
   const handleTransitions = () => {
@@ -256,59 +266,70 @@ function Home() {
 
   const handleFormChange = (field) => (event) => {
     const { value } = event.target
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => {
+      const next = { ...prev, [field]: value }
+      if (field === 'idPreform' && (value === '1' || value === 1)) {
+        next.dPreformIn = ''
+      }
+      return next
+    })
+    setSaveError(null)
   }
 
-  useEffect(() => {
-    if (!isModalOpen || activeTab !== 0) return
-    if (selectedRowId == null) {
-      setFormData(EMPTY_SUBSTITUTE_FORM)
-      return
+  const parseNum = (v) => {
+    if (v === '' || v == null) return null
+    const n = Number(v)
+    return Number.isNaN(n) ? null : n
+  }
+
+  const handleSave = async () => {
+    setSaveError(null)
+    const payload = {
+      id: isEditMode ? selectedRowId : null,
+      nmSub1: formData.nmSub1 || null,
+      nmSub2: formData.nmSub2 || null,
+      nmSub3: formData.nmSub3 || null,
+      nmSub4: formData.nmSub4 || null,
+      nmSub5: formData.nmSub5 || null,
+      dSubstituteOut: parseNum(formData.dSubstituteOut),
+      dSubstituteIn: parseNum(formData.dSubstituteIn),
+      lSubstiute: parseNum(formData.lSubstiute),
+      idPreform: formData.idPreform === '' ? null : parseNum(formData.idPreform),
+      dPreformOut: parseNum(formData.dPreformOut),
+      dPreformIn: formData.idPreform === '1' || formData.idPreform === 1 ? null : parseNum(formData.dPreformIn),
+      lPreform: parseNum(formData.lPreform),
+      ph: parseNum(formData.ph),
+      massPreform: parseNum(formData.massPreform),
     }
-    const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
-    if (selectedRow) {
-      setFormData(mapSubstituteToForm(selectedRow))
+    try {
+      await saveSubstitute(payload)
+      setIsModalOpen(false)
+      loadData()
+    } catch (e) {
+      setSaveError(e.message || 'Ошибка сохранения')
     }
-  }, [isModalOpen, selectedRowId, listData, activeTab])
+  }
 
   const columns = COLUMNS[activeTab]
+  const preformTypesFiltered = preformTypes.filter(
+    (item) => item.idPreform === 1 || item.idPreform === 2
+  )
 
   return (
     <div className="home">
-      <div className="home-toolbar">
-        <button type="button" className="home-toolbar-btn" onClick={handleCreateEdit}>
-          Создать / Редактировать
-        </button>
-        {activeTab !== 3 && (
-          <button type="button" className="home-toolbar-btn" onClick={handleTransitions}>
-            Переходы по трубе
-          </button>
-        )}
-        <button type="button" className="home-toolbar-btn" onClick={handleDelete}>
-          Удалить
-        </button>
-        <button type="button" className="home-toolbar-btn" onClick={handleCalcNorms}>
-          Расчёт норм времени
-        </button>
-        <button type="button" className="home-toolbar-btn" onClick={handlePrint}>
-          Печать отчёта
-        </button>
-        <button
-          type="button"
-          className={`home-toolbar-btn ${showMyRecords ? 'home-toolbar-btn_active' : ''}`}
-          onClick={() => setShowMyRecords(!showMyRecords)}
-        >
-          Мои записи
-        </button>
-        <input
-          type="search"
-          className="home-toolbar-search"
-          placeholder="Поиск по записям"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label="Поиск по записям"
-        />
-      </div>
+      <HomeToolbar
+        activeTab={activeTab}
+        searchQuery={searchQuery}
+        showMyRecords={showMyRecords}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onTransitions={handleTransitions}
+        onDelete={handleDelete}
+        onCalcNorms={handleCalcNorms}
+        onPrint={handlePrint}
+        onToggleMyRecords={() => setShowMyRecords(!showMyRecords)}
+        onSearchChange={setSearchQuery}
+      />
 
       <div className="home-tabs">
         {TABS.map((tab) => (
@@ -323,236 +344,30 @@ function Home() {
         ))}
       </div>
 
-      <div className="home-table-wrap">
-        {error && (
-          <div className="home-table-message home-table-message_error">{error}</div>
-        )}
-        {loading && (
-          <div className="home-table-message">Загрузка…</div>
-        )}
-        {!loading && !error && (
-          <table className="home-table">
-            <thead>
-              <tr>
-                {columns.map((col) => (
-                  <th key={col.key}>{col.label}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {listData.map((row, index) => {
-                const id = getRowId(row, activeTab)
-                return (
-                  <tr
-                    key={id}
-                    className={selectedRowId === id ? 'home-table-row_selected' : ''}
-                    onClick={() => setSelectedRowId(selectedRowId === id ? null : id)}
-                  >
-                    {columns.map((col) => (
-                      <td key={col.key}>
-                        {formatCell(row[col.key])}
-                      </td>
-                    ))}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <HomeTable
+        columns={columns}
+        listData={listData}
+        activeTab={activeTab}
+        selectedRowId={selectedRowId}
+        loading={loading}
+        error={error}
+        getRowId={getRowId}
+        formatCell={formatCell}
+        onSelectRow={setSelectedRowId}
+      />
 
-      {isModalOpen && activeTab === 0 && (
-        <div className="home-modal" role="dialog" aria-modal="true">
-          <div className="home-modal__backdrop" onClick={() => setIsModalOpen(false)} />
-          <div className="home-modal__panel" onClick={(e) => e.stopPropagation()}>
-            <div className="home-modal__header">
-              <h2 className="home-modal__title">
-                {selectedRowId ? 'Редактирование переводника' : 'Создание переводника'}
-              </h2>
-              <button
-                type="button"
-                className="home-modal__close"
-                onClick={() => setIsModalOpen(false)}
-                aria-label="Закрыть"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="home-modal__body">
-              <div className="home-modal__grid">
-                <label className="home-modal__field">
-                  <span>№ переводника</span>
-                  <input
-                    type="number"
-                    value={formData.idSubstitutePrepared}
-                    onChange={handleFormChange('idSubstitutePrepared')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>Тип заготовки</span>
-                  <select value={formData.idPreform} onChange={handleFormChange('idPreform')}>
-                    <option value="">Выберите тип</option>
-                    {preformTypes.map((item) => (
-                      <option key={item.idPreform} value={item.idPreform}>
-                        {item.nmPreform}
-                      </option>
-                    ))}
-                  </select>
-                  {preformError && (
-                    <span className="home-modal__hint">{preformError}</span>
-                  )}
-                </label>
-                <label className="home-modal__field">
-                  <span>D предформ. нар.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.dPreformOut}
-                    onChange={handleFormChange('dPreformOut')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>D предформ. вн.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.dPreformIn}
-                    onChange={handleFormChange('dPreformIn')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>PH</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.ph}
-                    onChange={handleFormChange('ph')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>L предформ.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.lPreform}
-                    onChange={handleFormChange('lPreform')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>Масса предформ.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.massPreform}
-                    onChange={handleFormChange('massPreform')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>T сумм.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.tSum}
-                    onChange={handleFormChange('tSum')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>D переходника нар.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.dSubstituteOut}
-                    onChange={handleFormChange('dSubstituteOut')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>D переходника вн.</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.dSubstituteIn}
-                    onChange={handleFormChange('dSubstituteIn')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>L переходника</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.lSubstiute}
-                    onChange={handleFormChange('lSubstiute')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>NM Sub 1</span>
-                  <input
-                    type="text"
-                    value={formData.nmSub1}
-                    onChange={handleFormChange('nmSub1')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>NM Sub 2</span>
-                  <input
-                    type="text"
-                    value={formData.nmSub2}
-                    onChange={handleFormChange('nmSub2')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>NM Sub 3</span>
-                  <input
-                    type="text"
-                    value={formData.nmSub3}
-                    onChange={handleFormChange('nmSub3')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>NM Sub 4</span>
-                  <input
-                    type="text"
-                    value={formData.nmSub4}
-                    onChange={handleFormChange('nmSub4')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>NM Sub 5</span>
-                  <input
-                    type="text"
-                    value={formData.nmSub5}
-                    onChange={handleFormChange('nmSub5')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>ID пользователя</span>
-                  <input
-                    type="number"
-                    value={formData.idUserCreator}
-                    onChange={handleFormChange('idUserCreator')}
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div className="home-modal__footer">
-              <button
-                type="button"
-                className="home-modal__btn home-modal__btn_secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Закрыть без сохранения
-              </button>
-              <button type="button" className="home-modal__btn">
-                Сохранить
-              </button>
-              <button type="button" className="home-modal__btn home-modal__btn_outline">
-                Переходы
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SubstituteModal
+        open={isModalOpen && activeTab === 0}
+        isEditMode={isEditMode}
+        selectedRowId={selectedRowId}
+        formData={formData}
+        preformTypesFiltered={preformTypesFiltered}
+        preformError={preformError}
+        saveError={saveError}
+        onClose={() => setIsModalOpen(false)}
+        onFormChange={handleFormChange}
+        onSave={handleSave}
+      />
     </div>
   )
 }

@@ -1,0 +1,146 @@
+package patrubki.dto;
+
+import java.math.BigDecimal;
+
+/**
+ * Тело запроса для добавления/редактирования переводника (вызов процедуры БД).
+ * id = null для добавления, id задан — для редактирования.
+ */
+public class SubstituteSaveDto {
+
+    private Integer id;
+    private String nmSub1;
+    private String nmSub2;
+    private String nmSub3;
+    private String nmSub4;
+    private String nmSub5;
+    private BigDecimal dSubstituteOut;
+    private BigDecimal dSubstituteIn;
+    private BigDecimal lSubstiute;
+    private Integer idPreform;
+    private BigDecimal dPreformOut;
+    private BigDecimal dPreformIn;
+    private BigDecimal lPreform;
+    private BigDecimal ph;
+    private BigDecimal massPreform;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNmSub1() {
+        return nmSub1;
+    }
+
+    public void setNmSub1(String nmSub1) {
+        this.nmSub1 = nmSub1;
+    }
+
+    public String getNmSub2() {
+        return nmSub2;
+    }
+
+    public void setNmSub2(String nmSub2) {
+        this.nmSub2 = nmSub2;
+    }
+
+    public String getNmSub3() {
+        return nmSub3;
+    }
+
+    public void setNmSub3(String nmSub3) {
+        this.nmSub3 = nmSub3;
+    }
+
+    public String getNmSub4() {
+        return nmSub4;
+    }
+
+    public void setNmSub4(String nmSub4) {
+        this.nmSub4 = nmSub4;
+    }
+
+    public String getNmSub5() {
+        return nmSub5;
+    }
+
+    public void setNmSub5(String nmSub5) {
+        this.nmSub5 = nmSub5;
+    }
+
+    public BigDecimal getDSubstituteOut() {
+        return dSubstituteOut;
+    }
+
+    public void setDSubstituteOut(BigDecimal dSubstituteOut) {
+        this.dSubstituteOut = dSubstituteOut;
+    }
+
+    public BigDecimal getDSubstituteIn() {
+        return dSubstituteIn;
+    }
+
+    public void setDSubstituteIn(BigDecimal dSubstituteIn) {
+        this.dSubstituteIn = dSubstituteIn;
+    }
+
+    public BigDecimal getLSubstiute() {
+        return lSubstiute;
+    }
+
+    public void setLSubstiute(BigDecimal lSubstiute) {
+        this.lSubstiute = lSubstiute;
+    }
+
+    public Integer getIdPreform() {
+        return idPreform;
+    }
+
+    public void setIdPreform(Integer idPreform) {
+        this.idPreform = idPreform;
+    }
+
+    public BigDecimal getDPreformOut() {
+        return dPreformOut;
+    }
+
+    public void setDPreformOut(BigDecimal dPreformOut) {
+        this.dPreformOut = dPreformOut;
+    }
+
+    public BigDecimal getDPreformIn() {
+        return dPreformIn;
+    }
+
+    public void setDPreformIn(BigDecimal dPreformIn) {
+        this.dPreformIn = dPreformIn;
+    }
+
+    public BigDecimal getLPreform() {
+        return lPreform;
+    }
+
+    public void setLPreform(BigDecimal lPreform) {
+        this.lPreform = lPreform;
+    }
+
+    public BigDecimal getPh() {
+        return ph;
+    }
+
+    public void setPh(BigDecimal ph) {
+        this.ph = ph;
+    }
+
+    public BigDecimal getMassPreform() {
+        return massPreform;
+    }
+
+    public void setMassPreform(BigDecimal massPreform) {
+        this.massPreform = massPreform;
+    }
+}

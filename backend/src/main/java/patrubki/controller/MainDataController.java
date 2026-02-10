@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +13,7 @@ import patrubki.dto.FitingDto;
 import patrubki.dto.HydrotestDto;
 import patrubki.dto.MakeSubstituteMainDto;
 import patrubki.dto.PreformTypDto;
+import patrubki.dto.SubstituteSaveDto;
 import patrubki.service.FitingService;
 import patrubki.service.HydrotestService;
 import patrubki.service.MakeSubstituteMainService;
@@ -71,6 +74,12 @@ public class MainDataController {
     @GetMapping("/preform-types")
     public ResponseEntity<List<PreformTypDto>> getPreformTypes() {
         return ResponseEntity.ok(preformTypService.findAllOrderByName());
+    }
+
+    @PostMapping("/substitutes")
+    public ResponseEntity<Void> saveSubstitute(@RequestBody SubstituteSaveDto body) {
+        substituteService.saveSubstitute(body);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/substitutes/{id}")
