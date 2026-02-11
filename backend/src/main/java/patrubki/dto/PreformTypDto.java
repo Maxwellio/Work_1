@@ -1,8 +1,13 @@
 package patrubki.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PreformTypDto {
 
+    @JsonProperty("idPreform")
     private Integer idPreform;
+    
+    @JsonProperty("nmPreform")
     private String nmPreform;
 
     public Integer getIdPreform() {

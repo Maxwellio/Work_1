@@ -1,47 +1,64 @@
 package patrubki.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.math.BigDecimal;
 
 public class MakeSubstituteMainDto {
 
-    @JsonProperty("id")
+    @JsonProperty("idSubstitutePrepared")
     private Integer idSubstitutePrepared;
+    
     @JsonProperty("idPreform")
     private Integer idPreform;
+    
     @JsonProperty("nmPreform")
     private String nmPreform;
+    
     @JsonProperty("name")
     private String name;
-    @JsonProperty("dpreformOut")
+    
+    @JsonProperty("dPreformOut")
     private BigDecimal dPreformOut;
-    @JsonProperty("dpreformIn")
+    
+    @JsonProperty("dPreformIn")
     private BigDecimal dPreformIn;
+    
     @JsonProperty("ph")
     private BigDecimal ph;
-    @JsonProperty("lpeform")
+    
+    @JsonProperty("lPreform")
     private BigDecimal lPreform;
+    
     @JsonProperty("massPreform")
     private BigDecimal massPreform;
+    
     @JsonProperty("tSum")
     private BigDecimal tSum;
-    @JsonProperty("dsubstituteOut")
+    
+    @JsonProperty("dSubstituteOut")
     private BigDecimal dSubstituteOut;
-    @JsonProperty("dsubstituteIn")
+    
+    @JsonProperty("dSubstituteIn")
     private BigDecimal dSubstituteIn;
-    @JsonProperty("lsubstitute")
-    private BigDecimal lSubstitute;
-    @JsonProperty("inmSub1")
+    
+    @JsonProperty("lSubstiute")
+    private BigDecimal lSubstiute;
+    
+    @JsonProperty("nmSub1")
     private String nmSub1;
-    @JsonProperty("inmSub2")
+    
+    @JsonProperty("nmSub2")
     private String nmSub2;
+    
     @JsonProperty("nmSub3")
     private String nmSub3;
+    
     @JsonProperty("nmSub4")
     private String nmSub4;
+    
     @JsonProperty("nmSub5")
     private String nmSub5;
+    
     @JsonProperty("idUserCreator")
     private Integer idUserCreator;
 
@@ -141,12 +158,12 @@ public class MakeSubstituteMainDto {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstitute() {
-        return lSubstitute;
+    public BigDecimal getLSubstiute() {
+        return lSubstiute;
     }
 
-    public void setLSubstitute(BigDecimal lSubstitute) {
-        this.lSubstitute = lSubstitute;
+    public void setLSubstiute(BigDecimal lSubstiute) {
+        this.lSubstiute = lSubstiute;
     }
 
     public String getNmSub1() {

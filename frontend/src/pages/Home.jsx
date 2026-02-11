@@ -83,7 +83,7 @@ const EMPTY_SUBSTITUTE_FORM = {
   dSubstituteOut: '',
   dSubstituteIn: '',
   lSubstiute: '',
-  idPreform: '',
+  idPreform: '1',
   dPreformOut: '',
   dPreformIn: '',
   lPreform: '',
@@ -294,7 +294,7 @@ function Home() {
       dSubstituteOut: parseNum(formData.dSubstituteOut),
       dSubstituteIn: parseNum(formData.dSubstituteIn),
       lSubstiute: parseNum(formData.lSubstiute),
-      idPreform: formData.idPreform === '' ? null : parseNum(formData.idPreform),
+      idPreform: formData.idPreform === '' || formData.idPreform == null ? 1 : parseNum(formData.idPreform),
       dPreformOut: parseNum(formData.dPreformOut),
       dPreformIn: formData.idPreform === '1' || formData.idPreform === 1 ? null : parseNum(formData.dPreformIn),
       lPreform: parseNum(formData.lPreform),
@@ -311,9 +311,9 @@ function Home() {
   }
 
   const columns = COLUMNS[activeTab]
-  const preformTypesFiltered = preformTypes.filter(
-    (item) => item.idPreform === 1 || item.idPreform === 2
-  )
+  const preformTypesFiltered = preformTypes
+    .filter((item) => item.idPreform === 1 || item.idPreform === 2)
+    .sort((a, b) => a.idPreform - b.idPreform)
 
   return (
     <div className="home">
