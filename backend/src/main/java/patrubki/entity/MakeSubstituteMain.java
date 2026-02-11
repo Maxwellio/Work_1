@@ -41,8 +41,8 @@ public class MakeSubstituteMain {
     @Column(name = "d_substitute_in", precision = 19, scale = 2)
     private BigDecimal dSubstituteIn;
 
-    @Column(name = "l_substiute", precision = 19, scale = 2)
-    private BigDecimal lSubstiute;
+    @Column(name = "l_substitute", precision = 19, scale = 2)
+    private BigDecimal lSubstitute;
 
     @Column(name = "nm_sub1", length = 255)
     private String nmSub1;
@@ -142,12 +142,12 @@ public class MakeSubstituteMain {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstiute() {
-        return lSubstiute;
+    public BigDecimal getLSubstitute() {
+        return lSubstitute;
     }
 
-    public void setLSubstiute(BigDecimal lSubstiute) {
-        this.lSubstiute = lSubstiute;
+    public void setLSubstitute(BigDecimal lSubstitute) {
+        this.lSubstitute = lSubstitute;
     }
 
     public String getNmSub1() {

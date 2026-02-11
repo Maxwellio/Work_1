@@ -1,27 +1,48 @@
 package patrubki.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class MakeSubstituteMainDto {
 
+    @JsonProperty("id")
     private Integer idSubstitutePrepared;
+    @JsonProperty("idPreform")
     private Integer idPreform;
+    @JsonProperty("nmPreform")
     private String nmPreform;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("dpreformOut")
     private BigDecimal dPreformOut;
+    @JsonProperty("dpreformIn")
     private BigDecimal dPreformIn;
+    @JsonProperty("ph")
     private BigDecimal ph;
+    @JsonProperty("lpeform")
     private BigDecimal lPreform;
+    @JsonProperty("massPreform")
     private BigDecimal massPreform;
+    @JsonProperty("tSum")
     private BigDecimal tSum;
+    @JsonProperty("dsubstituteOut")
     private BigDecimal dSubstituteOut;
+    @JsonProperty("dsubstituteIn")
     private BigDecimal dSubstituteIn;
-    private BigDecimal lSubstiute;
+    @JsonProperty("lsubstitute")
+    private BigDecimal lSubstitute;
+    @JsonProperty("inmSub1")
     private String nmSub1;
+    @JsonProperty("inmSub2")
     private String nmSub2;
+    @JsonProperty("nmSub3")
     private String nmSub3;
+    @JsonProperty("nmSub4")
     private String nmSub4;
+    @JsonProperty("nmSub5")
     private String nmSub5;
+    @JsonProperty("idUserCreator")
     private Integer idUserCreator;
 
     public Integer getIdSubstitutePrepared() {
@@ -120,12 +141,12 @@ public class MakeSubstituteMainDto {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstiute() {
-        return lSubstiute;
+    public BigDecimal getLSubstitute() {
+        return lSubstitute;
     }
 
-    public void setLSubstiute(BigDecimal lSubstiute) {
-        this.lSubstiute = lSubstiute;
+    public void setLSubstitute(BigDecimal lSubstitute) {
+        this.lSubstitute = lSubstitute;
     }
 
     public String getNmSub1() {
