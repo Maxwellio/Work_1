@@ -33,7 +33,7 @@ public class MakeSubstituteMainService {
     }
 
     public void saveSubstitute(SubstituteSaveDto dto) {
-        String sql = "CALL " + SUBSTITUTE_UPSERT_PROCEDURE + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "CALL substitute.add_edit_substitute" + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 dto.getId(),
                 dto.getNmSub1(),
