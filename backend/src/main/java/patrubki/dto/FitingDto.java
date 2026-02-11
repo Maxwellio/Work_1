@@ -1,23 +1,53 @@
 package patrubki.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 public class FitingDto {
 
+    @JsonProperty("idFiting")
     private Integer idFiting;
+    
+    @JsonProperty("idPreform")
     private Integer idPreform;
+    
+    @JsonProperty("nmPreform")
     private String nmPreform;
+    
+    @JsonProperty("nm")
     private String nm;
+    
+    @JsonProperty("tip")
     private BigDecimal tip;
+    
+    @JsonProperty("d")
     private BigDecimal d;
+    
+    @JsonProperty("th")
     private BigDecimal th;
+    
+    @JsonProperty("mass")
     private BigDecimal mass;
+    
+    @JsonProperty("l")
     private BigDecimal l;
+    
+    @JsonProperty("dStan")
     private BigDecimal dStan;
+    
+    @JsonProperty("lPreform")
     private BigDecimal lPreform;
+    
+    @JsonProperty("phPreform")
     private BigDecimal phPreform;
+    
+    @JsonProperty("tSum")
     private BigDecimal tSum;
+    
+    @JsonProperty("cnt")
     private String cnt;
+    
+    @JsonProperty("idUserCreator")
     private Integer idUserCreator;
 
     public Integer getIdFiting() {
