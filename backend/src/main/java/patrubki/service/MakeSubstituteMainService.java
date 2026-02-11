@@ -56,7 +56,7 @@ public class MakeSubstituteMainService {
                 dto.getNmSub5(),
                 dto.getDSubstituteOut(),
                 dto.getDSubstituteIn(),
-                dto.getLSubstiute(),
+                dto.getLSubstitute(),
                 dto.getIdPreform(),
                 dto.getDPreformOut(),
                 dto.getDPreformIn(),
@@ -129,7 +129,7 @@ public class MakeSubstituteMainService {
         dto.setTSum(e.getTSum());
         dto.setDSubstituteOut(e.getDSubstituteOut());
         dto.setDSubstituteIn(e.getDSubstituteIn());
-        dto.setLSubstiute(e.getLSubstiute());
+        dto.setLSubstitute(e.getLSubstitute());
         dto.setNmSub1(e.getNmSub1());
         dto.setNmSub2(e.getNmSub2());
         dto.setNmSub3(e.getNmSub3());

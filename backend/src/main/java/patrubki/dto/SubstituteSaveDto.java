@@ -16,7 +16,7 @@ public class SubstituteSaveDto {
     private String nmSub5;
     private BigDecimal dSubstituteOut;
     private BigDecimal dSubstituteIn;
-    private BigDecimal lSubstiute;
+    private BigDecimal lSubstitute;
     private Integer idPreform;
     private BigDecimal dPreformOut;
     private BigDecimal dPreformIn;
@@ -88,12 +88,12 @@ public class SubstituteSaveDto {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstiute() {
-        return lSubstiute;
+    public BigDecimal getLSubstitute() {
+        return lSubstitute;
     }
 
-    public void setLSubstiute(BigDecimal lSubstiute) {
-        this.lSubstiute = lSubstiute;
+    public void setLSubstitute(BigDecimal lSubstitute) {
+        this.lSubstitute = lSubstitute;
     }
 
     public Integer getIdPreform() {
