@@ -11,6 +11,7 @@ import patrubki.repository.MakeSubstituteMainRepository;
 import patrubki.repository.PreformTypRepository;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,8 @@ public class MakeSubstituteMainService {
 
     public void saveSubstitute(SubstituteSaveDto dto) {
         String sql = "CALL " + SUBSTITUTE_UPSERT_PROCEDURE + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
+        
+        Object[] args = {
                 dto.getId(),
                 dto.getNmSub1(),
                 dto.getNmSub2(),
@@ -50,7 +52,27 @@ public class MakeSubstituteMainService {
                 dto.getLPreform(),
                 dto.getPh(),
                 dto.getMassPreform()
-        );
+        };
+        
+        int[] argTypes = {
+                Types.INTEGER,      // id
+                Types.VARCHAR,      // nmSub1
+                Types.VARCHAR,      // nmSub2
+                Types.VARCHAR,      // nmSub3
+                Types.VARCHAR,      // nmSub4
+                Types.VARCHAR,      // nmSub5
+                Types.NUMERIC,      // dSubstituteOut
+                Types.NUMERIC,      // dSubstituteIn
+                Types.NUMERIC,      // lSubstiute
+                Types.INTEGER,      // idPreform
+                Types.NUMERIC,      // dPreformOut
+                Types.NUMERIC,      // dPreformIn
+                Types.NUMERIC,      // lPreform
+                Types.NUMERIC,      // ph
+                Types.NUMERIC       // massPreform
+        };
+        
+        jdbcTemplate.update(sql, args, argTypes);
     }
 
     public List<MakeSubstituteMainDto> findAllOrderByName(String search) {
