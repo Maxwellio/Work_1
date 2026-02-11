@@ -4,7 +4,9 @@ import {
   getFittings,
   getHydrotests,
   getPreformTypes,
+  getParty,
   saveSubstitute,
+  saveFitting,
   deleteSubstitute,
   deleteFitting,
   deleteHydrotest,
@@ -13,6 +15,7 @@ import { useAuth } from '../context/AuthContext'
 import HomeToolbar from '../components/HomeToolbar'
 import HomeTable from '../components/HomeTable'
 import SubstituteModal from '../components/SubstituteModal'
+import FittingModal from '../components/FittingModal'
 import '../styles/Home.css'
 
 const TABS = [
@@ -115,6 +118,42 @@ function mapSubstituteToForm(row) {
   }
 }
 
+const EMPTY_FITTING_FORM_PATRUBOK = {
+  nm: '',
+  d: '',
+  th: '',
+  l: '',
+  mass: '',
+  idPreform: '3',
+  lPreform: '',
+  phPreform: '',
+  dStan: '',
+  cnt: '',
+}
+
+const EMPTY_FITTING_FORM_TRUBA = {
+  nm: '',
+  d: '',
+  l: '',
+  mass: '',
+  cnt: '',
+}
+
+function mapFittingToForm(row) {
+  return {
+    nm: toInputValue(row.nm),
+    d: toInputValue(row.d),
+    th: toInputValue(row.th),
+    l: toInputValue(row.l),
+    mass: toInputValue(row.mass),
+    idPreform: toInputValue(row.idPreform),
+    lPreform: toInputValue(row.lPreform),
+    phPreform: toInputValue(row.phPreform),
+    dStan: toInputValue(row.dStan),
+    cnt: toInputValue(row.cnt),
+  }
+}
+
 function Home() {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState(0)
@@ -131,6 +170,11 @@ function Home() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [formData, setFormData] = useState(EMPTY_SUBSTITUTE_FORM)
   const [saveError, setSaveError] = useState(null)
+  const [partyList, setPartyList] = useState([])
+  const [fittingFormData, setFittingFormData] = useState(EMPTY_FITTING_FORM_PATRUBOK)
+  const [isFittingModalOpen, setIsFittingModalOpen] = useState(false)
+  const [isFittingEditMode, setIsFittingEditMode] = useState(false)
+  const [fittingSaveError, setFittingSaveError] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(searchQuery), DEBOUNCE_MS)
@@ -165,7 +209,7 @@ function Home() {
   }, [loadData])
 
   useEffect(() => {
-    if (activeTab !== 0) return
+    if (activeTab !== 0 && activeTab !== 1 && activeTab !== 2) return
     let isMounted = true
     setPreformError(null)
     getPreformTypes()
@@ -184,6 +228,23 @@ function Home() {
   }, [activeTab])
 
   useEffect(() => {
+    if (activeTab !== 1 && activeTab !== 2) return
+    let isMounted = true
+    getParty()
+      .then((data) => {
+        if (!isMounted) return
+        setPartyList(Array.isArray(data) ? data : [])
+      })
+      .catch(() => {
+        if (!isMounted) return
+        setPartyList([])
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [activeTab])
+
+  useEffect(() => {
     setSelectedRowId(null)
   }, [activeTab])
 
@@ -192,25 +253,48 @@ function Home() {
   }, [activeTab])
 
   const handleAdd = () => {
-    if (activeTab !== 0) return
-    setSaveError(null)
-    setIsEditMode(false)
-    setFormData(EMPTY_SUBSTITUTE_FORM)
-    setIsModalOpen(true)
+    if (activeTab === 0) {
+      setSaveError(null)
+      setIsEditMode(false)
+      setFormData(EMPTY_SUBSTITUTE_FORM)
+      setIsModalOpen(true)
+    } else if (activeTab === 1 || activeTab === 2) {
+      setFittingSaveError(null)
+      setIsFittingEditMode(false)
+      const emptyForm = activeTab === 1 ? EMPTY_FITTING_FORM_PATRUBOK : EMPTY_FITTING_FORM_TRUBA
+      const initialForm = { ...emptyForm }
+      if (partyList.length > 0 && partyList[0]?.colParty) {
+        initialForm.cnt = partyList[0].colParty
+      }
+      setFittingFormData(initialForm)
+      setIsFittingModalOpen(true)
+    }
   }
 
   const handleEdit = () => {
-    if (activeTab !== 0) return
-    if (selectedRowId == null) {
-      alert('Выберите запись для редактирования')
-      return
+    if (activeTab === 0) {
+      if (selectedRowId == null) {
+        alert('Выберите запись для редактирования')
+        return
+      }
+      const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
+      if (!selectedRow) return
+      setSaveError(null)
+      setIsEditMode(true)
+      setFormData(mapSubstituteToForm(selectedRow))
+      setIsModalOpen(true)
+    } else if (activeTab === 1 || activeTab === 2) {
+      if (selectedRowId == null) {
+        alert('Выберите запись для редактирования')
+        return
+      }
+      const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
+      if (!selectedRow) return
+      setFittingSaveError(null)
+      setIsFittingEditMode(true)
+      setFittingFormData(mapFittingToForm(selectedRow))
+      setIsFittingModalOpen(true)
     }
-    const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
-    if (!selectedRow) return
-    setSaveError(null)
-    setIsEditMode(true)
-    setFormData(mapSubstituteToForm(selectedRow))
-    setIsModalOpen(true)
   }
   const handleTransitions = () => {
     console.log('Переходы по трубе', { activeTab })
@@ -220,6 +304,12 @@ function Home() {
       alert('Для удаления нужно выбрать запись.')
       return
     }
+    const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
+    if (!selectedRow) return
+    const prefixes = { 0: 'переводник ', 1: 'патрубок ', 2: 'трубу ', 3: 'гидроиспытание ' }
+    const name = activeTab === 0 ? selectedRow.name : activeTab === 3 ? selectedRow.nh : selectedRow.nm
+    const message = 'Вы уверены, что хотите удалить ' + (prefixes[activeTab] || '') + (name || '') + '?'
+    if (!window.confirm(message)) return
     try {
       if (activeTab === 0) await deleteSubstitute(selectedRowId)
       else if (activeTab === 1 || activeTab === 2) await deleteFitting(selectedRowId)
@@ -276,6 +366,12 @@ function Home() {
     setSaveError(null)
   }
 
+  const handleFittingFormChange = (field) => (event) => {
+    const { value } = event.target
+    setFittingFormData((prev) => ({ ...prev, [field]: value }))
+    setFittingSaveError(null)
+  }
+
   const parseNum = (v) => {
     if (v === '' || v == null) return null
     const n = Number(v)
@@ -300,6 +396,7 @@ function Home() {
       lPreform: parseNum(formData.lPreform),
       ph: parseNum(formData.ph),
       massPreform: parseNum(formData.massPreform),
+      ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {
       await saveSubstitute(payload)
@@ -310,9 +407,44 @@ function Home() {
     }
   }
 
+  const handleFittingSave = async () => {
+    setFittingSaveError(null)
+    const tip = activeTab === 1 ? 1 : 2
+    const payload = {
+      id: null,
+      tip,
+      nm: fittingFormData.nm || null,
+      d: parseNum(fittingFormData.d),
+      th: tip === 1 ? parseNum(fittingFormData.th) : null,
+      l: parseNum(fittingFormData.l),
+      mass: parseNum(fittingFormData.mass),
+      idPreform: tip === 1 && (fittingFormData.idPreform !== '' && fittingFormData.idPreform != null)
+        ? parseNum(fittingFormData.idPreform)
+        : null,
+      lPreform: tip === 1 ? parseNum(fittingFormData.lPreform) : null,
+      phPreform: tip === 1 ? parseNum(fittingFormData.phPreform) : null,
+      dStan: tip === 1 ? parseNum(fittingFormData.dStan) : null,
+      cnt: fittingFormData.cnt || null,
+      ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
+    }
+    if (isFittingEditMode) {
+      payload.id = selectedRowId
+    }
+    try {
+      await saveFitting(payload)
+      setIsFittingModalOpen(false)
+      loadData()
+    } catch (e) {
+      setFittingSaveError(e.message || 'Ошибка сохранения')
+    }
+  }
+
   const columns = COLUMNS[activeTab]
   const preformTypesFiltered = preformTypes
     .filter((item) => item.idPreform === 1 || item.idPreform === 2)
+    .sort((a, b) => a.idPreform - b.idPreform)
+  const preformTypesFilteredFitting = preformTypes
+    .filter((item) => item.idPreform === 3 || item.idPreform === 4)
     .sort((a, b) => a.idPreform - b.idPreform)
 
   return (
@@ -367,6 +499,21 @@ function Home() {
         onClose={() => setIsModalOpen(false)}
         onFormChange={handleFormChange}
         onSave={handleSave}
+      />
+
+      <FittingModal
+        open={isFittingModalOpen && (activeTab === 1 || activeTab === 2)}
+        isEditMode={isFittingEditMode}
+        selectedRowId={selectedRowId}
+        formData={fittingFormData}
+        preformTypesFiltered={preformTypesFilteredFitting}
+        partyList={partyList}
+        preformError={activeTab === 1 ? preformError : null}
+        saveError={fittingSaveError}
+        onClose={() => setIsFittingModalOpen(false)}
+        onFormChange={handleFittingFormChange}
+        onSave={handleFittingSave}
+        tip={activeTab === 1 ? 1 : 2}
       />
     </div>
   )

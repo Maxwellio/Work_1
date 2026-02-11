@@ -121,9 +121,42 @@ export async function getPreformTypes() {
 }
 
 /**
+ * GET /api/party — список партий (col_party) для выпадающего списка.
+ * @returns {Promise<Array<{colParty: string}>>}
+ */
+export async function getParty() {
+  const res = await fetch(`${API_BASE}/party`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('getParty failed: ' + res.status)
+  return res.json()
+}
+
+/**
+ * POST /api/fittings — добавление или редактирование патрубка/трубы (вызов процедуры БД).
+ * @param {Object} payload — tip, nm, d, th, l, mass, idPreform, lPreform, phPreform, dStan, cnt, id, idUserCreator
+ * @returns {Promise<void>}
+ */
+export async function saveFitting(payload) {
+  const res = await fetch(`${API_BASE}/fittings`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка сохранения')
+  }
+}
+
+/**
  * POST /api/substitutes — добавление или редактирование переводника (вызов процедуры БД).
  * @param {Object} payload — поля формы: id (опционально, для редактирования), nmSub1..nmSub5,
- *   dSubstituteOut, dSubstituteIn, lSubstiute, idPreform, dPreformOut, dPreformIn, lPreform, ph, massPreform
+ *   dSubstituteOut, dSubstituteIn, lSubstiute, idPreform, dPreformOut, dPreformIn, lPreform, ph, massPreform,
+ *   idUserCreator (опционально, при создании — id создателя записи)
  * @returns {Promise<void>}
  */
 export async function saveSubstitute(payload) {

@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import patrubki.dto.FitingDto;
 import patrubki.dto.HydrotestDto;
 import patrubki.dto.MakeSubstituteMainDto;
+import patrubki.dto.PartyDto;
 import patrubki.dto.PreformTypDto;
+import patrubki.dto.FitingSaveDto;
 import patrubki.dto.SubstituteSaveDto;
 import patrubki.service.FitingService;
 import patrubki.service.HydrotestService;
 import patrubki.service.MakeSubstituteMainService;
+import patrubki.service.PartyService;
 import patrubki.service.PreformTypService;
 
 import java.util.List;
@@ -29,15 +32,18 @@ public class MainDataController {
     private final FitingService fitingService;
     private final HydrotestService hydrotestService;
     private final PreformTypService preformTypService;
+    private final PartyService partyService;
 
     public MainDataController(MakeSubstituteMainService substituteService,
                               FitingService fitingService,
                               HydrotestService hydrotestService,
-                              PreformTypService preformTypService) {
+                              PreformTypService preformTypService,
+                              PartyService partyService) {
         this.substituteService = substituteService;
         this.fitingService = fitingService;
         this.hydrotestService = hydrotestService;
         this.preformTypService = preformTypService;
+        this.partyService = partyService;
     }
 
     @GetMapping("/substitutes")
@@ -76,6 +82,11 @@ public class MainDataController {
         return ResponseEntity.ok(preformTypService.findAllOrderByName());
     }
 
+    @GetMapping("/party")
+    public ResponseEntity<List<PartyDto>> getParty() {
+        return ResponseEntity.ok(partyService.findAllOrderByColParty());
+    }
+
     @PostMapping("/substitutes")
     public ResponseEntity<Void> saveSubstitute(@RequestBody SubstituteSaveDto body) {
         substituteService.saveSubstitute(body);
@@ -86,6 +97,12 @@ public class MainDataController {
     public ResponseEntity<Void> deleteSubstitute(@PathVariable Integer id) {
         substituteService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/fittings")
+    public ResponseEntity<Void> saveFitting(@RequestBody FitingSaveDto body) {
+        fitingService.saveFitting(body);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/fittings/{id}")

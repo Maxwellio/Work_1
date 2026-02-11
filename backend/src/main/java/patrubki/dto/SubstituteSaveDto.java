@@ -33,8 +33,8 @@ public class SubstituteSaveDto {
     @JsonProperty("dSubstituteIn")
     private BigDecimal dSubstituteIn;
     
-    @JsonProperty("lSubstiute")
-    private BigDecimal lSubstiute;
+    @JsonProperty("lSubstitute")
+    private BigDecimal lSubstitute;
     
     @JsonProperty("idPreform")
     private Integer idPreform;
@@ -53,6 +53,9 @@ public class SubstituteSaveDto {
     
     @JsonProperty("massPreform")
     private BigDecimal massPreform;
+
+    @JsonProperty("idUserCreator")
+    private Integer idUserCreator;
 
     public Integer getId() {
         return id;
@@ -118,12 +121,12 @@ public class SubstituteSaveDto {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstiute() {
-        return lSubstiute;
+    public BigDecimal getLSubstitute() {
+        return lSubstitute;
     }
 
-    public void setLSubstiute(BigDecimal lSubstiute) {
-        this.lSubstiute = lSubstiute;
+    public void setLSubstitute(BigDecimal lSubstitute) {
+        this.lSubstitute = lSubstitute;
     }
 
     public Integer getIdPreform() {
@@ -172,5 +175,13 @@ public class SubstituteSaveDto {
 
     public void setMassPreform(BigDecimal massPreform) {
         this.massPreform = massPreform;
+    }
+
+    public Integer getIdUserCreator() {
+        return idUserCreator;
+    }
+
+    public void setIdUserCreator(Integer idUserCreator) {
+        this.idUserCreator = idUserCreator;
     }
 }

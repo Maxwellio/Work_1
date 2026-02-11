@@ -99,7 +99,6 @@ function SubstituteModal({
               <span>Диаметр наружный переводника, мм</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.dSubstituteOut}
                 onChange={onFormChange('dSubstituteOut')}
               />
@@ -108,7 +107,6 @@ function SubstituteModal({
               <span>Диаметр внутренний переводника, мм</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.dSubstituteIn}
                 onChange={onFormChange('dSubstituteIn')}
               />
@@ -117,7 +115,6 @@ function SubstituteModal({
               <span>Длина, мм переводника</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.lSubstiute}
                 onChange={onFormChange('lSubstiute')}
               />
@@ -143,7 +140,6 @@ function SubstituteModal({
               <span>Диаметр наружный заготовки, мм</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.dPreformOut}
                 onChange={onFormChange('dPreformOut')}
               />
@@ -152,7 +148,6 @@ function SubstituteModal({
               <span>Диаметр внутренний заготовки, мм</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.dPreformIn}
                 onChange={onFormChange('dPreformIn')}
                 disabled={formData.idPreform === '1' || formData.idPreform === 1}
@@ -162,7 +157,6 @@ function SubstituteModal({
               <span>Длина, мм заготовки</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.lPreform}
                 onChange={onFormChange('lPreform')}
               />
@@ -171,7 +165,6 @@ function SubstituteModal({
               <span>Коэф. жесткости, ГПа</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.ph}
                 onChange={onFormChange('ph')}
               />
@@ -180,7 +173,6 @@ function SubstituteModal({
               <span>Масса заготовки</span>
               <input
                 type="number"
-                step="0.01"
                 value={formData.massPreform}
                 onChange={onFormChange('massPreform')}
               />

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class MakeSubstituteMainDto {
 
-    @JsonProperty("idSubstitutePrepared")
+    @JsonProperty("id")
     private Integer idSubstitutePrepared;
     
     @JsonProperty("idPreform")
@@ -41,8 +41,8 @@ public class MakeSubstituteMainDto {
     @JsonProperty("dSubstituteIn")
     private BigDecimal dSubstituteIn;
     
-    @JsonProperty("lSubstiute")
-    private BigDecimal lSubstiute;
+    @JsonProperty("lSubstitute")
+    private BigDecimal lSubstitute;
     
     @JsonProperty("nmSub1")
     private String nmSub1;
@@ -158,12 +158,12 @@ public class MakeSubstituteMainDto {
         this.dSubstituteIn = dSubstituteIn;
     }
 
-    public BigDecimal getLSubstiute() {
-        return lSubstiute;
+    public BigDecimal getLSubstitute() {
+        return lSubstitute;
     }
 
-    public void setLSubstiute(BigDecimal lSubstiute) {
-        this.lSubstiute = lSubstiute;
+    public void setLSubstitute(BigDecimal lSubstitute) {
+        this.lSubstitute = lSubstitute;
     }
 
     public String getNmSub1() {

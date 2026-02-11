@@ -22,9 +22,6 @@ public class MakeSubstituteMainService {
 
     private static final Logger log = LoggerFactory.getLogger(MakeSubstituteMainService.class);
 
-    /** Заглушка: подставьте имя вашей процедуры в БД (схема substitute). */
-    private static final String SUBSTITUTE_UPSERT_PROCEDURE = "substitute.placeholder_upsert_substitute";
-
     private final MakeSubstituteMainRepository repository;
     private final PreformTypRepository preformTypRepository;
     private final JdbcTemplate jdbcTemplate;
@@ -38,14 +35,7 @@ public class MakeSubstituteMainService {
     }
 
     public void saveSubstitute(SubstituteSaveDto dto) {
-        log.info("saveSubstitute called with DTO: id={}, nmSub1={}, nmSub2={}, nmSub3={}, nmSub4={}, nmSub5={}, " +
-                "dSubstituteOut={}, dSubstituteIn={}, lSubstiute={}, idPreform={}, " +
-                "dPreformOut={}, dPreformIn={}, lPreform={}, ph={}, massPreform={}",
-                dto.getId(), dto.getNmSub1(), dto.getNmSub2(), dto.getNmSub3(), dto.getNmSub4(), dto.getNmSub5(),
-                dto.getDSubstituteOut(), dto.getDSubstituteIn(), dto.getLSubstiute(), dto.getIdPreform(),
-                dto.getDPreformOut(), dto.getDPreformIn(), dto.getLPreform(), dto.getPh(), dto.getMassPreform());
-        
-        String sql = "CALL " + SUBSTITUTE_UPSERT_PROCEDURE + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "CALL substiute.add_edit_substitute" + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         Object[] args = {
                 dto.getId(),
@@ -62,7 +52,8 @@ public class MakeSubstituteMainService {
                 dto.getDPreformIn(),
                 dto.getLPreform(),
                 dto.getPh(),
-                dto.getMassPreform()
+                dto.getMassPreform(),
+                dto.getIdUserCreator()
         };
         
         int[] argTypes = {
@@ -74,16 +65,17 @@ public class MakeSubstituteMainService {
                 Types.VARCHAR,      // nmSub5
                 Types.NUMERIC,      // dSubstituteOut
                 Types.NUMERIC,      // dSubstituteIn
-                Types.NUMERIC,      // lSubstiute
+                Types.NUMERIC,      // lSubstitute
                 Types.INTEGER,      // idPreform
                 Types.NUMERIC,      // dPreformOut
                 Types.NUMERIC,      // dPreformIn
                 Types.NUMERIC,      // lPreform
                 Types.NUMERIC,      // ph
-                Types.NUMERIC       // massPreform
+                Types.NUMERIC,      // massPreform
+                Types.INTEGER       // idUserCreator
         };
         
-        jdbcTemplate.update(sql, args, argTypes);
+        jdbcTemplate.update(sql, args);
     }
 
     public List<MakeSubstituteMainDto> findAllOrderByName(String search) {
