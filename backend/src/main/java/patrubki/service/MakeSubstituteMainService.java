@@ -1,5 +1,7 @@
 package patrubki.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 public class MakeSubstituteMainService {
 
+    private static final Logger log = LoggerFactory.getLogger(MakeSubstituteMainService.class);
+
     /** Заглушка: подставьте имя вашей процедуры в БД (схема substitute). */
     private static final String SUBSTITUTE_UPSERT_PROCEDURE = "substitute.placeholder_upsert_substitute";
 
@@ -34,6 +38,13 @@ public class MakeSubstituteMainService {
     }
 
     public void saveSubstitute(SubstituteSaveDto dto) {
+        log.info("saveSubstitute called with DTO: id={}, nmSub1={}, nmSub2={}, nmSub3={}, nmSub4={}, nmSub5={}, " +
+                "dSubstituteOut={}, dSubstituteIn={}, lSubstiute={}, idPreform={}, " +
+                "dPreformOut={}, dPreformIn={}, lPreform={}, ph={}, massPreform={}",
+                dto.getId(), dto.getNmSub1(), dto.getNmSub2(), dto.getNmSub3(), dto.getNmSub4(), dto.getNmSub5(),
+                dto.getDSubstituteOut(), dto.getDSubstituteIn(), dto.getLSubstiute(), dto.getIdPreform(),
+                dto.getDPreformOut(), dto.getDPreformIn(), dto.getLPreform(), dto.getPh(), dto.getMassPreform());
+        
         String sql = "CALL " + SUBSTITUTE_UPSERT_PROCEDURE + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         Object[] args = {
