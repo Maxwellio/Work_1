@@ -23,6 +23,16 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
+    public List<PartyDto> findDistinctColPartyOrdered() {
+        return repository.findDistinctColPartyOrdered().stream()
+                .map(colParty -> {
+                    PartyDto dto = new PartyDto();
+                    dto.setColParty(colParty);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     private PartyDto toDto(Party entity) {
         PartyDto dto = new PartyDto();
         dto.setColParty(entity.getColParty());

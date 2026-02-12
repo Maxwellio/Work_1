@@ -11,6 +11,8 @@ import patrubki.repository.FitingRepository;
 import patrubki.repository.PreformTypRepository;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,39 +32,28 @@ public class FitingService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveFitting(FitingSaveDto dto) {
-        String sql = "CALL substiute.add_edit_fiting(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] args = {
-                dto.getId(),
-                dto.getTip(),
-                dto.getNm(),
-                dto.getD(),
-                dto.getTh(),
-                dto.getL(),
-                dto.getMass(),
-                dto.getIdPreform(),
-                dto.getLPreform(),
-                dto.getPhPreform(),
-                dto.getDStan(),
-                dto.getCnt(),
-                dto.getIdUserCreator()
-        };
-        int[] argTypes = {
-                Types.INTEGER,
-                Types.INTEGER,
-                Types.VARCHAR,
-                Types.NUMERIC,
-                Types.NUMERIC,
-                Types.NUMERIC,
-                Types.NUMERIC,
-                Types.INTEGER,
-                Types.NUMERIC,
-                Types.NUMERIC,
-                Types.NUMERIC,
-                Types.VARCHAR,
-                Types.INTEGER
-        };
-        jdbcTemplate.update(sql, args, argTypes);
+    public Integer saveFitting(FitingSaveDto dto) {
+        return jdbcTemplate.execute((Connection conn) -> {
+            CallableStatement cs = conn.prepareCall(
+                "{ call substiute.add_edit_fiting(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setObject(1, dto.getId(), Types.INTEGER);
+            cs.setObject(2, dto.getTip(), Types.INTEGER);
+            cs.setString(3, dto.getNm());
+            cs.setObject(4, dto.getD(), Types.NUMERIC);
+            cs.setObject(5, dto.getTh(), Types.NUMERIC);
+            cs.setObject(6, dto.getL(), Types.NUMERIC);
+            cs.setObject(7, dto.getMass(), Types.NUMERIC);
+            cs.setObject(8, dto.getIdPreform(), Types.INTEGER);
+            cs.setObject(9, dto.getLPreform(), Types.NUMERIC);
+            cs.setObject(10, dto.getPhPreform(), Types.NUMERIC);
+            cs.setObject(11, dto.getDStan(), Types.NUMERIC);
+            cs.setString(12, dto.getCnt());
+            cs.setObject(13, dto.getIdUserCreator(), Types.INTEGER);
+            cs.execute();
+            Integer resultId = (Integer) cs.getObject(1);
+            return resultId != null ? resultId : (dto.getId() != null ? dto.getId() : 0);
+        });
     }
 
     public List<FitingDto> findByTipOrderByNm(int tip, String search) {

@@ -13,6 +13,8 @@ import patrubki.repository.MakeSubstituteMainRepository;
 import patrubki.repository.PreformTypRepository;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,48 +36,31 @@ public class MakeSubstituteMainService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveSubstitute(SubstituteSaveDto dto) {
-        String sql = "CALL substiute.add_edit_substitute" + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        Object[] args = {
-                dto.getId(),
-                dto.getNmSub1(),
-                dto.getNmSub2(),
-                dto.getNmSub3(),
-                dto.getNmSub4(),
-                dto.getNmSub5(),
-                dto.getDSubstituteOut(),
-                dto.getDSubstituteIn(),
-                dto.getLSubstitute(),
-                dto.getIdPreform(),
-                dto.getDPreformOut(),
-                dto.getDPreformIn(),
-                dto.getLPreform(),
-                dto.getPh(),
-                dto.getMassPreform(),
-                dto.getIdUserCreator()
-        };
-        
-        int[] argTypes = {
-                Types.INTEGER,      // id
-                Types.VARCHAR,      // nmSub1
-                Types.VARCHAR,      // nmSub2
-                Types.VARCHAR,      // nmSub3
-                Types.VARCHAR,      // nmSub4
-                Types.VARCHAR,      // nmSub5
-                Types.NUMERIC,      // dSubstituteOut
-                Types.NUMERIC,      // dSubstituteIn
-                Types.NUMERIC,      // lSubstitute
-                Types.INTEGER,      // idPreform
-                Types.NUMERIC,      // dPreformOut
-                Types.NUMERIC,      // dPreformIn
-                Types.NUMERIC,      // lPreform
-                Types.NUMERIC,      // ph
-                Types.NUMERIC,      // massPreform
-                Types.INTEGER       // idUserCreator
-        };
-        
-        jdbcTemplate.update(sql, args);
+    public Integer saveSubstitute(SubstituteSaveDto dto) {
+        return jdbcTemplate.execute((Connection conn) -> {
+            CallableStatement cs = conn.prepareCall(
+                "{ call substiute.add_edit_substitute(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setObject(1, dto.getId(), Types.INTEGER);
+            cs.setString(2, dto.getNmSub1());
+            cs.setString(3, dto.getNmSub2());
+            cs.setString(4, dto.getNmSub3());
+            cs.setString(5, dto.getNmSub4());
+            cs.setString(6, dto.getNmSub5());
+            cs.setObject(7, dto.getDSubstituteOut(), Types.NUMERIC);
+            cs.setObject(8, dto.getDSubstituteIn(), Types.NUMERIC);
+            cs.setObject(9, dto.getLSubstitute(), Types.NUMERIC);
+            cs.setObject(10, dto.getIdPreform(), Types.INTEGER);
+            cs.setObject(11, dto.getDPreformOut(), Types.NUMERIC);
+            cs.setObject(12, dto.getDPreformIn(), Types.NUMERIC);
+            cs.setObject(13, dto.getLPreform(), Types.NUMERIC);
+            cs.setObject(14, dto.getPh(), Types.NUMERIC);
+            cs.setObject(15, dto.getMassPreform(), Types.NUMERIC);
+            cs.setObject(16, dto.getIdUserCreator(), Types.INTEGER);
+            cs.execute();
+            Integer resultId = (Integer) cs.getObject(1);
+            return resultId != null ? resultId : (dto.getId() != null ? dto.getId() : 0);
+        });
     }
 
     public List<MakeSubstituteMainDto> findAllOrderByName(String search) {

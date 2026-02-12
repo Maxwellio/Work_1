@@ -34,6 +34,7 @@ function HomeTable({
               return (
                 <tr
                   key={id}
+                  data-row-id={id}
                   className={selectedRowId === id ? 'home-table-row_selected' : ''}
                   onClick={() => onSelectRow(selectedRowId === id ? null : id)}
                 >

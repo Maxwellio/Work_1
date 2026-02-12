@@ -137,7 +137,7 @@ export async function getParty() {
 /**
  * POST /api/fittings — добавление или редактирование патрубка/трубы (вызов процедуры БД).
  * @param {Object} payload — tip, nm, d, th, l, mass, idPreform, lPreform, phPreform, dStan, cnt, id, idUserCreator
- * @returns {Promise<void>}
+ * @returns {Promise<{id: number}>}
  */
 export async function saveFitting(payload) {
   const res = await fetch(`${API_BASE}/fittings`, {
@@ -150,6 +150,7 @@ export async function saveFitting(payload) {
     const text = await res.text()
     throw new Error(text || 'Ошибка сохранения')
   }
+  return res.json()
 }
 
 /**
@@ -157,7 +158,7 @@ export async function saveFitting(payload) {
  * @param {Object} payload — поля формы: id (опционально, для редактирования), nmSub1..nmSub5,
  *   dSubstituteOut, dSubstituteIn, lSubstiute, idPreform, dPreformOut, dPreformIn, lPreform, ph, massPreform,
  *   idUserCreator (опционально, при создании — id создателя записи)
- * @returns {Promise<void>}
+ * @returns {Promise<{id: number}>}
  */
 export async function saveSubstitute(payload) {
   const res = await fetch(`${API_BASE}/substitutes`, {
@@ -170,6 +171,7 @@ export async function saveSubstitute(payload) {
     const text = await res.text()
     throw new Error(text || 'Ошибка сохранения')
   }
+  return res.json()
 }
 
 /**
@@ -197,6 +199,39 @@ export async function deleteFitting(id) {
   if (!res.ok) {
     const text = await res.text()
     throw new Error(text || 'Ошибка удаления')
+  }
+}
+
+/**
+ * POST /api/hydrotests — добавление или редактирование гидроиспытания (вызов процедуры БД).
+ * @param {Object} payload — id, nh, d, th, l, testtime, mass, l1, l2, nv, idUserCreator
+ * @returns {Promise<{id: number}>}
+ */
+export async function saveHydrotest(payload) {
+  const res = await fetch(`${API_BASE}/hydrotests`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка сохранения')
+  }
+  return res.json()
+}
+
+/**
+ * POST /api/hydrotests/{id}/calc-time — расчёт нормы времени (nv) для гидроиспытания.
+ */
+export async function calcHydroTime(id) {
+  const res = await fetch(`${API_BASE}/hydrotests/${id}/calc-time`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || 'Ошибка расчёта')
   }
 }
 

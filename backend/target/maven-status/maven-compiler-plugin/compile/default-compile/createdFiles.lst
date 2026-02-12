@@ -17,6 +17,7 @@ patrubki\repository\RoleSprRepository.class
 patrubki\service\PartyService.class
 patrubki\controller\package-info.class
 patrubki\dto\SubstituteSaveDto.class
+patrubki\dto\HydrotestSaveDto.class
 patrubki\entity\RoleSpr.class
 patrubki\controller\AuthController.class
 patrubki\repository\MakeSubstituteMainRepository.class

@@ -135,28 +135,29 @@ function FittingModal({
                     onChange={onFormChange('lPreform')}
                   />
                 </label>
-                <label className="home-modal__field">
-                  <span>Коэф. жесткости, ГПа</span>
-                  <input
-                    type="number"
-                    value={formData.phPreform}
-                    onChange={onFormChange('phPreform')}
-                  />
-                </label>
-                <label className="home-modal__field">
-                  <span>Наибольший диаметр изделия</span>
-                  <input
-                    type="number"
-                    value={formData.dStan}
-                    onChange={onFormChange('dStan')}
-                  />
-                </label>
               </>
             )}
 
             <label className="home-modal__field">
+              <span>Коэф. жесткости, ГПа</span>
+              <input
+                type="number"
+                value={formData.phPreform}
+                onChange={onFormChange('phPreform')}
+              />
+            </label>
+            <label className="home-modal__field">
+              <span>Наибольший диаметр изделия</span>
+              <input
+                type="number"
+                value={formData.dStan}
+                onChange={onFormChange('dStan')}
+              />
+            </label>
+
+            <label className="home-modal__field">
               <span>Количество деталей в партии, шт.</span>
-              <select value={formData.cnt} onChange={onFormChange('cnt')}>
+              <select value={formData.cnt ?? ''} onChange={onFormChange('cnt')}>
                 <option value="">Выберите</option>
                 {partyList.map((item) => (
                   <option key={item.colParty} value={item.colParty}>

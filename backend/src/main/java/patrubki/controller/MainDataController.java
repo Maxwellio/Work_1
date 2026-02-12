@@ -15,6 +15,7 @@ import patrubki.dto.MakeSubstituteMainDto;
 import patrubki.dto.PartyDto;
 import patrubki.dto.PreformTypDto;
 import patrubki.dto.FitingSaveDto;
+import patrubki.dto.HydrotestSaveDto;
 import patrubki.dto.SubstituteSaveDto;
 import patrubki.service.FitingService;
 import patrubki.service.HydrotestService;
@@ -84,13 +85,13 @@ public class MainDataController {
 
     @GetMapping("/party")
     public ResponseEntity<List<PartyDto>> getParty() {
-        return ResponseEntity.ok(partyService.findAllOrderByColParty());
+        return ResponseEntity.ok(partyService.findDistinctColPartyOrdered());
     }
 
     @PostMapping("/substitutes")
-    public ResponseEntity<Void> saveSubstitute(@RequestBody SubstituteSaveDto body) {
-        substituteService.saveSubstitute(body);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<java.util.Map<String, Integer>> saveSubstitute(@RequestBody SubstituteSaveDto body) {
+        Integer id = substituteService.saveSubstitute(body);
+        return ResponseEntity.ok(java.util.Map.of("id", id));
     }
 
     @DeleteMapping("/substitutes/{id}")
@@ -100,14 +101,26 @@ public class MainDataController {
     }
 
     @PostMapping("/fittings")
-    public ResponseEntity<Void> saveFitting(@RequestBody FitingSaveDto body) {
-        fitingService.saveFitting(body);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<java.util.Map<String, Integer>> saveFitting(@RequestBody FitingSaveDto body) {
+        Integer id = fitingService.saveFitting(body);
+        return ResponseEntity.ok(java.util.Map.of("id", id));
     }
 
     @DeleteMapping("/fittings/{id}")
     public ResponseEntity<Void> deleteFitting(@PathVariable Integer id) {
         fitingService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/hydrotests")
+    public ResponseEntity<java.util.Map<String, Integer>> saveHydrotest(@RequestBody HydrotestSaveDto body) {
+        Integer id = hydrotestService.saveHydrotest(body);
+        return ResponseEntity.ok(java.util.Map.of("id", id));
+    }
+
+    @PostMapping("/hydrotests/{id}/calc-time")
+    public ResponseEntity<Void> calcHydroTime(@PathVariable Integer id) {
+        hydrotestService.calcHydroTime(id);
         return ResponseEntity.noContent().build();
     }
 

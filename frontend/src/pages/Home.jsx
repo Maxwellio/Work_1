@@ -7,6 +7,8 @@ import {
   getParty,
   saveSubstitute,
   saveFitting,
+  saveHydrotest,
+  calcHydroTime,
   deleteSubstitute,
   deleteFitting,
   deleteHydrotest,
@@ -16,6 +18,7 @@ import HomeToolbar from '../components/HomeToolbar'
 import HomeTable from '../components/HomeTable'
 import SubstituteModal from '../components/SubstituteModal'
 import FittingModal from '../components/FittingModal'
+import HydrotestModal from '../components/HydrotestModal'
 import '../styles/Home.css'
 
 const TABS = [
@@ -136,6 +139,8 @@ const EMPTY_FITTING_FORM_TRUBA = {
   d: '',
   l: '',
   mass: '',
+  phPreform: '',
+  dStan: '',
   cnt: '',
 }
 
@@ -151,6 +156,32 @@ function mapFittingToForm(row) {
     phPreform: toInputValue(row.phPreform),
     dStan: toInputValue(row.dStan),
     cnt: toInputValue(row.cnt),
+  }
+}
+
+const EMPTY_HYDROTEST_FORM = {
+  nh: '',
+  d: '',
+  th: '',
+  l: '',
+  testtime: '',
+  mass: '',
+  l1: '',
+  l2: '',
+  nv: '',
+}
+
+function mapHydrotestToForm(row) {
+  return {
+    nh: toInputValue(row.nh),
+    d: toInputValue(row.d),
+    th: toInputValue(row.th),
+    l: toInputValue(row.l),
+    testtime: toInputValue(row.testtime),
+    mass: toInputValue(row.mass),
+    l1: toInputValue(row.l1),
+    l2: toInputValue(row.l2),
+    nv: toInputValue(row.nv),
   }
 }
 
@@ -175,6 +206,11 @@ function Home() {
   const [isFittingModalOpen, setIsFittingModalOpen] = useState(false)
   const [isFittingEditMode, setIsFittingEditMode] = useState(false)
   const [fittingSaveError, setFittingSaveError] = useState(null)
+  const [hydrotestFormData, setHydrotestFormData] = useState(EMPTY_HYDROTEST_FORM)
+  const [isHydrotestModalOpen, setIsHydrotestModalOpen] = useState(false)
+  const [isHydrotestEditMode, setIsHydrotestEditMode] = useState(false)
+  const [hydrotestSaveError, setHydrotestSaveError] = useState(null)
+  const [pendingScrollToId, setPendingScrollToId] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(searchQuery), DEBOUNCE_MS)
@@ -252,6 +288,18 @@ function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [activeTab])
 
+  useEffect(() => {
+    if (pendingScrollToId == null) return
+    const timer = setTimeout(() => {
+      const el = document.querySelector(`[data-row-id="${pendingScrollToId}"]`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+      setPendingScrollToId(null)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [pendingScrollToId, listData])
+
   const handleAdd = () => {
     if (activeTab === 0) {
       setSaveError(null)
@@ -268,6 +316,11 @@ function Home() {
       }
       setFittingFormData(initialForm)
       setIsFittingModalOpen(true)
+    } else if (activeTab === 3) {
+      setHydrotestSaveError(null)
+      setIsHydrotestEditMode(false)
+      setHydrotestFormData({ ...EMPTY_HYDROTEST_FORM })
+      setIsHydrotestModalOpen(true)
     }
   }
 
@@ -294,6 +347,17 @@ function Home() {
       setIsFittingEditMode(true)
       setFittingFormData(mapFittingToForm(selectedRow))
       setIsFittingModalOpen(true)
+    } else if (activeTab === 3) {
+      if (selectedRowId == null) {
+        alert('Выберите запись для редактирования')
+        return
+      }
+      const selectedRow = listData.find((row) => getRowId(row, activeTab) === selectedRowId)
+      if (!selectedRow) return
+      setHydrotestSaveError(null)
+      setIsHydrotestEditMode(true)
+      setHydrotestFormData(mapHydrotestToForm(selectedRow))
+      setIsHydrotestModalOpen(true)
     }
   }
   const handleTransitions = () => {
@@ -320,8 +384,21 @@ function Home() {
       alert(e.message || 'Не удалось удалить запись')
     }
   }
-  const handleCalcNorms = () => {
-    console.log('Расчёт норм времени', { activeTab })
+  const handleCalcNorms = async () => {
+    if (activeTab === 3) {
+      if (selectedRowId == null) {
+        alert('Выберите запись для расчёта норм времени')
+        return
+      }
+      try {
+        await calcHydroTime(selectedRowId)
+        await loadData()
+      } catch (e) {
+        alert(e.message || 'Ошибка расчёта норм времени')
+      }
+    } else {
+      console.log('Расчёт норм времени', { activeTab })
+    }
   }
   const handlePrint = async () => {
     if (selectedRowId == null) {
@@ -372,6 +449,12 @@ function Home() {
     setFittingSaveError(null)
   }
 
+  const handleHydrotestFormChange = (field) => (event) => {
+    const { value } = event.target
+    setHydrotestFormData((prev) => ({ ...prev, [field]: value }))
+    setHydrotestSaveError(null)
+  }
+
   const parseNum = (v) => {
     if (v === '' || v == null) return null
     const n = Number(v)
@@ -399,9 +482,13 @@ function Home() {
       ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {
-      await saveSubstitute(payload)
+      const { id } = await saveSubstitute(payload)
       setIsModalOpen(false)
-      loadData()
+      await loadData()
+      if (id != null && id > 0) {
+        setSelectedRowId(id)
+        setPendingScrollToId(id)
+      }
     } catch (e) {
       setSaveError(e.message || 'Ошибка сохранения')
     }
@@ -422,20 +509,52 @@ function Home() {
         ? parseNum(fittingFormData.idPreform)
         : null,
       lPreform: tip === 1 ? parseNum(fittingFormData.lPreform) : null,
-      phPreform: tip === 1 ? parseNum(fittingFormData.phPreform) : null,
-      dStan: tip === 1 ? parseNum(fittingFormData.dStan) : null,
+      phPreform: parseNum(fittingFormData.phPreform),
+      dStan: parseNum(fittingFormData.dStan),
       cnt: fittingFormData.cnt || null,
-      ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
+      ...(isFittingEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     if (isFittingEditMode) {
       payload.id = selectedRowId
     }
     try {
-      await saveFitting(payload)
+      const { id } = await saveFitting(payload)
       setIsFittingModalOpen(false)
-      loadData()
+      await loadData()
+      if (id != null && id > 0) {
+        setSelectedRowId(id)
+        setPendingScrollToId(id)
+      }
     } catch (e) {
       setFittingSaveError(e.message || 'Ошибка сохранения')
+    }
+  }
+
+  const handleHydrotestSave = async () => {
+    setHydrotestSaveError(null)
+    const payload = {
+      id: isHydrotestEditMode ? selectedRowId : null,
+      nh: hydrotestFormData.nh || null,
+      d: parseNum(hydrotestFormData.d),
+      th: parseNum(hydrotestFormData.th),
+      l: parseNum(hydrotestFormData.l),
+      testtime: parseNum(hydrotestFormData.testtime),
+      mass: parseNum(hydrotestFormData.mass),
+      l1: parseNum(hydrotestFormData.l1),
+      l2: parseNum(hydrotestFormData.l2),
+      nv: parseNum(hydrotestFormData.nv),
+      ...(isHydrotestEditMode ? {} : { idUserCreator: user?.userId ?? null }),
+    }
+    try {
+      const { id } = await saveHydrotest(payload)
+      setIsHydrotestModalOpen(false)
+      await loadData()
+      if (id != null && id > 0) {
+        setSelectedRowId(id)
+        setPendingScrollToId(id)
+      }
+    } catch (e) {
+      setHydrotestSaveError(e.message || 'Ошибка сохранения')
     }
   }
 
@@ -514,6 +633,17 @@ function Home() {
         onFormChange={handleFittingFormChange}
         onSave={handleFittingSave}
         tip={activeTab === 1 ? 1 : 2}
+      />
+
+      <HydrotestModal
+        open={isHydrotestModalOpen && activeTab === 3}
+        isEditMode={isHydrotestEditMode}
+        selectedRowId={selectedRowId}
+        formData={hydrotestFormData}
+        saveError={hydrotestSaveError}
+        onClose={() => setIsHydrotestModalOpen(false)}
+        onFormChange={handleHydrotestFormChange}
+        onSave={handleHydrotestSave}
       />
     </div>
   )

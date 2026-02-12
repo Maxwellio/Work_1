@@ -36,7 +36,7 @@
 }
 
 .home-modal__id {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--color-text-muted);
   font-weight: normal;
 }
@@ -49,14 +49,14 @@
 }
 
 .home-modal__subheader-label {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--color-text);
 }
 
 .home-modal__title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -87,7 +87,7 @@
 
 .home-modal__section-title {
   margin: 0.5rem 0 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -100,7 +100,7 @@
 }
 
 .home-modal__name-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--color-text);
   min-width: 6rem;
 }
@@ -118,7 +118,7 @@
   border: 1px solid var(--color-sand);
   border-radius: var(--radius-md);
   padding: 0.45rem 0.5rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .home-modal__name-inp:focus {
@@ -128,7 +128,7 @@
 
 .home-modal__name-sep {
   color: var(--color-text-muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
   user-select: none;
 }
 
@@ -140,18 +140,26 @@
 
 .home-modal__field {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.9rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
   color: var(--color-text);
+}
+
+.home-modal__field > span:first-child {
+  min-width: 12rem;
+  flex-shrink: 0;
 }
 
 .home-modal__field input,
 .home-modal__field select {
+  flex: 1;
+  min-width: 0;
   border: 1px solid var(--color-sand);
   border-radius: var(--radius-md);
   padding: 0.45rem 0.6rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   background: var(--color-white);
 }
 
@@ -162,15 +170,19 @@
   box-shadow: 0 0 0 2px rgba(0, 142, 185, 0.12);
 }
 
+.home-modal__field .home-modal__hint {
+  margin-left: 0.25rem;
+}
+
 .home-modal__hint {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .home-modal__save-error {
   padding: 0.5rem 1.5rem;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 1rem;
   background: var(--color-sand-light);
   border-top: 1px solid var(--color-sand);
 }
@@ -190,7 +202,7 @@
   border: none;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 

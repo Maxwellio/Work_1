@@ -15,7 +15,7 @@ function HomeToolbar({
 }) {
   return (
     <div className="home-toolbar">
-      {(activeTab === 0 || activeTab === 1 || activeTab === 2) && (
+      {(activeTab === 0 || activeTab === 1 || activeTab === 2 || activeTab === 3) && (
         <>
           <button type="button" className="home-toolbar-btn" onClick={onAdd}>
             Добавить
