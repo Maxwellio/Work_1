@@ -39,7 +39,7 @@ public class MakeSubstituteMainService {
     public Integer saveSubstitute(SubstituteSaveDto dto) {
         return jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "{ call substiute.add_edit_substitute(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
+                "call substiute.add_edit_substitute(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setObject(1, dto.getId(), Types.INTEGER);
             cs.setString(2, dto.getNmSub1());
@@ -58,8 +58,7 @@ public class MakeSubstituteMainService {
             cs.setObject(15, dto.getMassPreform(), Types.NUMERIC);
             cs.setObject(16, dto.getIdUserCreator(), Types.INTEGER);
             cs.execute();
-            Integer resultId = (Integer) cs.getObject(1);
-            return resultId != null ? resultId : (dto.getId() != null ? dto.getId() : 0);
+            return extractId(cs.getObject(1), dto.getId());
         });
     }
 
@@ -117,5 +116,12 @@ public class MakeSubstituteMainService {
             preformTypRepository.findById(e.getIdPreform()).ifPresent(p -> dto.setNmPreform(p.getNmPreform()));
         }
         return dto;
+    }
+
+    private Integer extractId(Object rawId, Integer fallbackId) {
+        if (rawId instanceof Number) {
+            return ((Number) rawId).intValue();
+        }
+        return fallbackId != null ? fallbackId : 0;
     }
 }

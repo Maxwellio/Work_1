@@ -204,7 +204,7 @@ export async function deleteFitting(id) {
 
 /**
  * POST /api/hydrotests — добавление или редактирование гидроиспытания (вызов процедуры БД).
- * @param {Object} payload — id, nh, d, th, l, testtime, mass, l1, l2, nv, idUserCreator
+ * @param {Object} payload — id, nh, d, th, l, testtime, mass, l1, l2, idUserCreator
  * @returns {Promise<{id: number}>}
  */
 export async function saveHydrotest(payload) {

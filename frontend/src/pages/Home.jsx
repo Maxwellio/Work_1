@@ -542,7 +542,6 @@ function Home() {
       mass: parseNum(hydrotestFormData.mass),
       l1: parseNum(hydrotestFormData.l1),
       l2: parseNum(hydrotestFormData.l2),
-      nv: parseNum(hydrotestFormData.nv),
       ...(isHydrotestEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {

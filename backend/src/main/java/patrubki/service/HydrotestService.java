@@ -29,7 +29,7 @@ public class HydrotestService {
     public Integer saveHydrotest(HydrotestSaveDto dto) {
         Integer id = jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "{ call substiute.add_edit_hydrotest(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
+                "call substiute.add_edit_hydro(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setObject(1, dto.getId(), Types.INTEGER);
             cs.setString(2, dto.getNh());
@@ -40,11 +40,9 @@ public class HydrotestService {
             cs.setObject(7, dto.getMass(), Types.NUMERIC);
             cs.setObject(8, dto.getL1(), Types.NUMERIC);
             cs.setObject(9, dto.getL2(), Types.NUMERIC);
-            cs.setObject(10, dto.getNv(), Types.NUMERIC);
-            cs.setObject(11, dto.getIdUserCreator(), Types.INTEGER);
+            cs.setObject(10, dto.getIdUserCreator(), Types.INTEGER);
             cs.execute();
-            Integer resultId = (Integer) cs.getObject(1);
-            return resultId != null ? resultId : (dto.getId() != null ? dto.getId() : 0);
+            return extractId(cs.getObject(1), dto.getId());
         });
         if (id != null && id > 0) {
             calcHydroTime(id);
@@ -55,8 +53,8 @@ public class HydrotestService {
     public void calcHydroTime(Integer idHydrotest) {
         jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "{ call substiute.calc_hydro_time(?) }");
-            cs.setInt(1, idHydrotest);
+                "call substiute.calc_hydro_time(?)");
+            cs.setObject(1, idHydrotest, Types.INTEGER);
             cs.execute();
             return null;
         });
@@ -97,5 +95,12 @@ public class HydrotestService {
         dto.setNv(e.getNv());
         dto.setIdUserCreator(e.getIdUserCreator());
         return dto;
+    }
+
+    private Integer extractId(Object rawId, Integer fallbackId) {
+        if (rawId instanceof Number) {
+            return ((Number) rawId).intValue();
+        }
+        return fallbackId != null ? fallbackId : 0;
     }
 }

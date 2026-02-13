@@ -120,7 +120,7 @@ function HydrotestModal({
               <input
                 type="number"
                 value={formData.nv}
-                onChange={onFormChange('nv')}
+                readOnly
               />
             </label>
           </div>

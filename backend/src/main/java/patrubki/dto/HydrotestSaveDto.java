@@ -36,9 +36,6 @@ public class HydrotestSaveDto {
     @JsonProperty("l2")
     private BigDecimal l2;
 
-    @JsonProperty("nv")
-    private BigDecimal nv;
-
     @JsonProperty("idUserCreator")
     private Integer idUserCreator;
 
@@ -112,14 +109,6 @@ public class HydrotestSaveDto {
 
     public void setL2(BigDecimal l2) {
         this.l2 = l2;
-    }
-
-    public BigDecimal getNv() {
-        return nv;
-    }
-
-    public void setNv(BigDecimal nv) {
-        this.nv = nv;
     }
 
     public Integer getIdUserCreator() {

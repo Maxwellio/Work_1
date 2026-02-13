@@ -11,6 +11,6 @@ public interface PartyRepository extends JpaRepository<Party, String> {
     @Query(value = "SELECT * FROM substitute.party ORDER BY col_party", nativeQuery = true)
     List<Party> findAllOrderByColParty();
 
-    @Query(value = "SELECT DISTINCT col_party FROM substitute.party ORDER BY COALESCE((regexp_match(col_party, '^(\\d+)'))[1]::int, 999999999) NULLS LAST", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT col_party FROM substitute.party WHERE col_party IS NOT NULL", nativeQuery = true)
     List<String> findDistinctColPartyOrdered();
 }
