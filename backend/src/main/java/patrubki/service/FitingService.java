@@ -35,7 +35,7 @@ public class FitingService {
     public Integer saveFitting(FitingSaveDto dto) {
         return jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "call substiute.add_edit_fiting(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "call substitute.add_edit_fiting(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setObject(1, dto.getId(), Types.INTEGER);
             cs.setObject(2, dto.getTip(), Types.INTEGER);

@@ -29,7 +29,7 @@ public class HydrotestService {
     public Integer saveHydrotest(HydrotestSaveDto dto) {
         Integer id = jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "call substiute.add_edit_hydro(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "call substitute.add_edit_hydro(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setObject(1, dto.getId(), Types.INTEGER);
             cs.setString(2, dto.getNh());
@@ -53,7 +53,7 @@ public class HydrotestService {
     public void calcHydroTime(Integer idHydrotest) {
         jdbcTemplate.execute((Connection conn) -> {
             CallableStatement cs = conn.prepareCall(
-                "call substiute.calc_hydro_time(?)");
+                "call substitute.calc_hydro_time(?)");
             cs.setObject(1, idHydrotest, Types.INTEGER);
             cs.execute();
             return null;

@@ -19,6 +19,7 @@ import HomeTable from '../components/HomeTable'
 import SubstituteModal from '../components/SubstituteModal'
 import FittingModal from '../components/FittingModal'
 import HydrotestModal from '../components/HydrotestModal'
+import TransitionsRefModal from '../components/TransitionsRefModal'
 import '../styles/Home.css'
 
 const TABS = [
@@ -211,6 +212,7 @@ function Home() {
   const [isHydrotestEditMode, setIsHydrotestEditMode] = useState(false)
   const [hydrotestSaveError, setHydrotestSaveError] = useState(null)
   const [pendingScrollToId, setPendingScrollToId] = useState(null)
+  const [isTransitionsRefModalOpen, setIsTransitionsRefModalOpen] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(searchQuery), DEBOUNCE_MS)
@@ -393,6 +395,7 @@ function Home() {
       try {
         await calcHydroTime(selectedRowId)
         await loadData()
+        setPendingScrollToId(selectedRowId)
       } catch (e) {
         alert(e.message || 'Ошибка расчёта норм времени')
       }
@@ -574,6 +577,7 @@ function Home() {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onTransitions={handleTransitions}
+        onOpenTransitionsRef={() => setIsTransitionsRefModalOpen(true)}
         onDelete={handleDelete}
         onCalcNorms={handleCalcNorms}
         onPrint={handlePrint}
@@ -643,6 +647,11 @@ function Home() {
         onClose={() => setIsHydrotestModalOpen(false)}
         onFormChange={handleHydrotestFormChange}
         onSave={handleHydrotestSave}
+      />
+
+      <TransitionsRefModal
+        open={isTransitionsRefModalOpen}
+        onClose={() => setIsTransitionsRefModalOpen(false)}
       />
     </div>
   )

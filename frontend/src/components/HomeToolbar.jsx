@@ -7,6 +7,7 @@ function HomeToolbar({
   onAdd,
   onEdit,
   onTransitions,
+  onOpenTransitionsRef,
   onDelete,
   onCalcNorms,
   onPrint,
@@ -54,6 +55,13 @@ function HomeToolbar({
         onChange={(e) => onSearchChange(e.target.value)}
         aria-label="Поиск по записям"
       />
+      <button
+        type="button"
+        className="home-toolbar-btn"
+        onClick={onOpenTransitionsRef}
+      >
+        Справочник переходов
+      </button>
     </div>
   )
 }

@@ -236,6 +236,36 @@ export async function calcHydroTime(id) {
 }
 
 /**
+ * GET /api/operation-groups — список групп операций (operation_structure_group).
+ * @returns {Promise<Array<{idGroupOperations: number, nmGroupOperations: string}>>}
+ */
+export async function getOperationGroups() {
+  const res = await fetch(`${API_BASE}/operation-groups`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('getOperationGroups failed: ' + res.status)
+  return res.json()
+}
+
+/**
+ * GET /api/operations — список операций (operation_structure_spr).
+ * @param {number} [groupId] — фильтр по id_group_operations
+ * @returns {Promise<Array<{idOperations: number, nmOperations: string, tk: number, idGroupOperations: number}>>}
+ */
+export async function getOperations(groupId) {
+  const params = groupId != null ? `?groupId=${groupId}` : ''
+  const res = await fetch(`${API_BASE}/operations${params}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('getOperations failed: ' + res.status)
+  return res.json()
+}
+
+/**
  * DELETE /api/hydrotests/{id}
  */
 export async function deleteHydrotest(id) {

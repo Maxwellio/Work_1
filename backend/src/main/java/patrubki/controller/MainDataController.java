@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import patrubki.dto.FitingDto;
 import patrubki.dto.HydrotestDto;
 import patrubki.dto.MakeSubstituteMainDto;
+import patrubki.dto.OperationStructureGroupDto;
+import patrubki.dto.OperationStructureSprDto;
 import patrubki.dto.PartyDto;
 import patrubki.dto.PreformTypDto;
 import patrubki.dto.FitingSaveDto;
@@ -20,6 +22,8 @@ import patrubki.dto.SubstituteSaveDto;
 import patrubki.service.FitingService;
 import patrubki.service.HydrotestService;
 import patrubki.service.MakeSubstituteMainService;
+import patrubki.service.OperationStructureGroupService;
+import patrubki.service.OperationStructureSprService;
 import patrubki.service.PartyService;
 import patrubki.service.PreformTypService;
 
@@ -34,17 +38,23 @@ public class MainDataController {
     private final HydrotestService hydrotestService;
     private final PreformTypService preformTypService;
     private final PartyService partyService;
+    private final OperationStructureGroupService operationStructureGroupService;
+    private final OperationStructureSprService operationStructureSprService;
 
     public MainDataController(MakeSubstituteMainService substituteService,
                               FitingService fitingService,
                               HydrotestService hydrotestService,
                               PreformTypService preformTypService,
-                              PartyService partyService) {
+                              PartyService partyService,
+                              OperationStructureGroupService operationStructureGroupService,
+                              OperationStructureSprService operationStructureSprService) {
         this.substituteService = substituteService;
         this.fitingService = fitingService;
         this.hydrotestService = hydrotestService;
         this.preformTypService = preformTypService;
         this.partyService = partyService;
+        this.operationStructureGroupService = operationStructureGroupService;
+        this.operationStructureSprService = operationStructureSprService;
     }
 
     @GetMapping("/substitutes")
@@ -86,6 +96,20 @@ public class MainDataController {
     @GetMapping("/party")
     public ResponseEntity<List<PartyDto>> getParty() {
         return ResponseEntity.ok(partyService.findDistinctColPartyOrdered());
+    }
+
+    @GetMapping("/operation-groups")
+    public ResponseEntity<List<OperationStructureGroupDto>> getOperationGroups() {
+        return ResponseEntity.ok(operationStructureGroupService.findAllOrderByName());
+    }
+
+    @GetMapping("/operations")
+    public ResponseEntity<List<OperationStructureSprDto>> getOperations(
+            @RequestParam(required = false) Integer groupId) {
+        if (groupId != null) {
+            return ResponseEntity.ok(operationStructureSprService.findByIdGroupOperations(groupId));
+        }
+        return ResponseEntity.ok(operationStructureSprService.findAllOrderById());
     }
 
     @PostMapping("/substitutes")
