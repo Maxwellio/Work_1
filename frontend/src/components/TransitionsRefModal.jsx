@@ -42,6 +42,8 @@ function TransitionsRefModal({ open, onClose }) {
   if (!open) return null
 
   const formatCell = (value) => (value == null ? '—' : String(value))
+  const groupsSorted = [...groups].sort((a, b) => (a.idGroupOperations ?? 0) - (b.idGroupOperations ?? 0))
+  const operationsSorted = [...operations].sort((a, b) => (a.idOperations ?? 0) - (b.idOperations ?? 0))
 
   return (
     <div
@@ -84,7 +86,7 @@ function TransitionsRefModal({ open, onClose }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {groups.map((g) => (
+                      {groupsSorted.map((g) => (
                         <tr
                           key={g.idGroupOperations}
                           className={selectedGroupId === g.idGroupOperations ? 'home-table-row_selected' : ''}
@@ -122,7 +124,7 @@ function TransitionsRefModal({ open, onClose }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {operations.map((op) => (
+                      {operationsSorted.map((op) => (
                         <tr key={op.idOperations}>
                           <td>{formatCell(op.nmOperations)}</td>
                           <td>{formatCell(op.tk)}</td>
