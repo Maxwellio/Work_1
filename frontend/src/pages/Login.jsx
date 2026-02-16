@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { login as apiLogin } from '../api'
+import { useLogin } from '../hooks/useLogin'
 import '../styles/Login.css'
 
 /**
@@ -12,19 +11,16 @@ import '../styles/Login.css'
 function Login() {
   const navigate = useNavigate()
   const { user, fetchUser } = useAuth()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [sessionChecked, setSessionChecked] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-    fetchUser().then((u) => {
-      if (!cancelled) setSessionChecked(true)
-    })
-    return () => { cancelled = true }
-  }, [fetchUser])
+  const {
+    username,
+    password,
+    error,
+    submitting,
+    sessionChecked,
+    setUsername,
+    setPassword,
+    handleSubmit,
+  } = useLogin(fetchUser, navigate)
 
   if (!sessionChecked) {
     return (
@@ -38,29 +34,6 @@ function Login() {
 
   if (user) {
     return <Navigate to="/" replace />
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-    setSubmitting(true)
-    try {
-      const res = await apiLogin(username.trim(), password)
-      if (!res.ok) {
-        if (res.status === 401) {
-          setError('Неверный логин или пароль')
-        } else {
-          setError('Ошибка входа. Попробуйте позже.')
-        }
-        return
-      }
-      await fetchUser()
-      navigate('/', { replace: true })
-    } catch (err) {
-      setError('Ошибка соединения. Проверьте подключение.')
-    } finally {
-      setSubmitting(false)
-    }
   }
 
   return (

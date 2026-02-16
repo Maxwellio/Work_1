@@ -1,43 +1,19 @@
-import { useState, useEffect } from 'react'
 import Close from '@mui/icons-material/Close'
-import { getOperationGroups, getOperations } from '../api'
 import '../styles/SubstituteModal.css'
 import '../styles/TransitionsRefModal.css'
 
-function TransitionsRefModal({ open, onClose }) {
-  const [groups, setGroups] = useState([])
-  const [operations, setOperations] = useState([])
-  const [selectedGroupId, setSelectedGroupId] = useState(null)
-  const [loadingGroups, setLoadingGroups] = useState(false)
-  const [loadingOperations, setLoadingOperations] = useState(false)
-  const [errorGroups, setErrorGroups] = useState(null)
-  const [errorOperations, setErrorOperations] = useState(null)
-
-  useEffect(() => {
-    if (!open) return
-    setLoadingGroups(true)
-    setErrorGroups(null)
-    setGroups([])
-    setSelectedGroupId(null)
-    setOperations([])
-    getOperationGroups()
-      .then((data) => setGroups(Array.isArray(data) ? data : []))
-      .catch((e) => setErrorGroups(e.message || 'Ошибка загрузки групп'))
-      .finally(() => setLoadingGroups(false))
-  }, [open])
-
-  useEffect(() => {
-    if (!open || selectedGroupId == null) {
-      setOperations([])
-      return
-    }
-    setLoadingOperations(true)
-    setErrorOperations(null)
-    getOperations(selectedGroupId)
-      .then((data) => setOperations(Array.isArray(data) ? data : []))
-      .catch((e) => setErrorOperations(e.message || 'Ошибка загрузки операций'))
-      .finally(() => setLoadingOperations(false))
-  }, [open, selectedGroupId])
+function TransitionsRefModal({
+  open,
+  onClose,
+  groups,
+  operations,
+  selectedGroupId,
+  onSelectGroup,
+  loadingGroups,
+  loadingOperations,
+  errorGroups,
+  errorOperations,
+}) {
 
   if (!open) return null
 
@@ -91,7 +67,7 @@ function TransitionsRefModal({ open, onClose }) {
                           key={g.idGroupOperations}
                           className={selectedGroupId === g.idGroupOperations ? 'home-table-row_selected' : ''}
                           onClick={() =>
-                            setSelectedGroupId(
+                            onSelectGroup(
                               selectedGroupId === g.idGroupOperations ? null : g.idGroupOperations
                             )
                           }
