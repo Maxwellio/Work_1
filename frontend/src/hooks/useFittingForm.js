@@ -58,6 +58,11 @@ export function useFittingForm({
   const handleSave = async () => {
     setSaveError(null)
     const tip = activeTab === 1 ? 1 : 2
+    const hasNm = formData.nm != null && String(formData.nm).trim() !== ''
+    if (!hasNm) {
+      setSaveError('Заполните хотя бы одно поле наименования')
+      return
+    }
     const payload = {
       id: isEditMode ? selectedRowId : null,
       tip,

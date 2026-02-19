@@ -53,6 +53,12 @@ export function useSubstituteForm({
 
   const handleSave = async () => {
     setSaveError(null)
+    const nameFields = [formData.nmSub1, formData.nmSub2, formData.nmSub3, formData.nmSub4, formData.nmSub5]
+    const hasName = nameFields.some((v) => v != null && String(v).trim() !== '')
+    if (!hasName) {
+      setSaveError('Заполните хотя бы одно поле наименования')
+      return
+    }
     const payload = {
       id: isEditMode ? selectedRowId : null,
       nmSub1: formData.nmSub1 || null,
