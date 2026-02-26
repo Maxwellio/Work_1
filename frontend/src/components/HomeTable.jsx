@@ -1,4 +1,16 @@
-import '../styles/Home.css'
+import { alpha } from '@mui/material/styles'
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material'
 
 function HomeTable({
   columns,
@@ -12,44 +24,54 @@ function HomeTable({
   onSelectRow,
 }) {
   return (
-    <div className="home-table-wrap">
-      {error && (
-        <div className="home-table-message home-table-message_error">{error}</div>
-      )}
+    <TableContainer component={Paper} sx={{ flex: 1, minHeight: 0, overflow: 'auto', mt: 2 }}>
+      {error && <Alert severity="error" sx={{ m: 2 }}>{error}</Alert>}
       {loading && (
-        <div className="home-table-message">Загрузка…</div>
+        <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress size={26} />
+        </Box>
       )}
       {!loading && !error && (
-        <table className="home-table">
-          <thead>
-            <tr>
+        <Table size="small" stickyHeader>
+          <TableHead>
+            <TableRow>
               {columns.map((col) => (
-                <th key={col.key}>{col.label}</th>
+                <TableCell key={col.key} sx={{ fontWeight: 600 }}>
+                  {col.label}
+                </TableCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {listData.map((row) => {
               const id = getRowId(row, activeTab)
+              const selected = selectedRowId === id
               return (
-                <tr
+                <TableRow
                   key={id}
                   data-row-id={id}
-                  className={selectedRowId === id ? 'home-table-row_selected' : ''}
-                  onClick={() => onSelectRow(selectedRowId === id ? null : id)}
+                  hover
+                  onClick={() => onSelectRow(selected ? null : id)}
+                  sx={(theme) => ({
+                    cursor: 'pointer',
+                    bgcolor: selected ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                    '&:hover': {
+                      bgcolor: selected
+                        ? alpha(theme.palette.primary.main, 0.14)
+                        : alpha(theme.palette.primary.main, 0.04),
+                    },
+                  })}
                 >
                   {columns.map((col) => (
-                    <td key={col.key}>
-                      {formatCell(row[col.key])}
-                    </td>
+                    <TableCell key={col.key}>{formatCell(row[col.key])}</TableCell>
                   ))}
-                </tr>
+                </TableRow>
               )
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       )}
-    </div>
+    </TableContainer>
   )
 }
 

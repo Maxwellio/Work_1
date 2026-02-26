@@ -1,6 +1,18 @@
 import Check from '@mui/icons-material/Check'
 import Close from '@mui/icons-material/Close'
-import '../styles/SubstituteModal.css'
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 
 function HydrotestModal({
   open,
@@ -18,135 +30,47 @@ function HydrotestModal({
   const titleAdd = 'Добавление гидроиспытания'
 
   return (
-    <div
-      className="home-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="home-hydrotest-modal-title"
-      title={isEditMode ? titleEdit : titleAdd}
-    >
-      <div className="home-modal__backdrop" onClick={onClose} />
-      <div className="home-modal__panel" onClick={(e) => e.stopPropagation()}>
-        <div className="home-modal__header">
-          <h2 id="home-hydrotest-modal-title" className="home-modal__title">
-            {isEditMode ? titleEdit : titleAdd}
-          </h2>
-          <button
-            type="button"
-            className="home-modal__close"
-            onClick={onClose}
-            aria-label="Закрыть"
-          >
-            ×
-          </button>
-        </div>
-        <div className="home-modal__subheader">
-          <span className="home-modal__subheader-label">Гидроиспытание</span>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" aria-labelledby="home-hydrotest-modal-title">
+      <DialogTitle id="home-hydrotest-modal-title" sx={{ pr: 6 }}>
+        {isEditMode ? titleEdit : titleAdd}
+        <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>
+          <Close />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Гидроиспытание</Typography>
           {isEditMode && (
-            <span className="home-modal__id" aria-hidden="true">
+            <Typography variant="body2" color="text.secondary">
               {selectedRowId}
-            </span>
+            </Typography>
           )}
-        </div>
+          </Box>
 
-        <div className="home-modal__body">
-          <div className="home-modal__section">
-            <label className="home-modal__field">
-              <span>Наименование</span>
-              <input
-                type="text"
-                value={formData.nh}
-                onChange={onFormChange('nh')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Диаметр, мм</span>
-              <input
-                type="number"
-                value={formData.d}
-                onChange={onFormChange('d')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Толщина стенки, мм</span>
-              <input
-                type="number"
-                value={formData.th}
-                onChange={onFormChange('th')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Длина, мм</span>
-              <input
-                type="number"
-                value={formData.l}
-                onChange={onFormChange('l')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Время на испытание, сек</span>
-              <input
-                type="number"
-                value={formData.testtime}
-                onChange={onFormChange('testtime')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Масса, кг</span>
-              <input
-                type="number"
-                value={formData.mass}
-                onChange={onFormChange('mass')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Длина резьбовой поверхности 1, мм</span>
-              <input
-                type="number"
-                value={formData.l1}
-                onChange={onFormChange('l1')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Длина резьбовой поверхности 2, мм</span>
-              <input
-                type="number"
-                value={formData.l2}
-                onChange={onFormChange('l2')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Норма времени, чел.ч</span>
-              <input
-                type="number"
-                value={formData.nv}
-                readOnly
-              />
-            </label>
-          </div>
-        </div>
+          <TextField label="Наименование" type="text" size="small" value={formData.nh} onChange={onFormChange('nh')} />
+          <TextField label="Диаметр, мм" type="number" size="small" value={formData.d} onChange={onFormChange('d')} />
+          <TextField label="Толщина стенки, мм" type="number" size="small" value={formData.th} onChange={onFormChange('th')} />
+          <TextField label="Длина, мм" type="number" size="small" value={formData.l} onChange={onFormChange('l')} />
+          <TextField label="Время на испытание, сек" type="number" size="small" value={formData.testtime} onChange={onFormChange('testtime')} />
+          <TextField label="Масса, кг" type="number" size="small" value={formData.mass} onChange={onFormChange('mass')} />
+          <TextField label="Длина резьбовой поверхности 1, мм" type="number" size="small" value={formData.l1} onChange={onFormChange('l1')} />
+          <TextField label="Длина резьбовой поверхности 2, мм" type="number" size="small" value={formData.l2} onChange={onFormChange('l2')} />
+          <TextField label="Норма времени, чел.ч" type="number" size="small" value={formData.nv} InputProps={{ readOnly: true }} />
 
-        {saveError && (
-          <div className="home-modal__save-error" role="alert">
-            {saveError}
-          </div>
-        )}
-        <div className="home-modal__footer">
-          <button type="button" className="home-modal__btn" onClick={onSave}>
-            <Check className="home-modal__btn-icon" fontSize="small" />
-            Ок
-          </button>
-          <button
-            type="button"
-            className="home-modal__btn home-modal__btn_secondary"
-            onClick={onClose}
-          >
-            <Close className="home-modal__btn-icon" fontSize="small" />
-            Отмена
-          </button>
-        </div>
-      </div>
-    </div>
+          {saveError && <Alert severity="error">{saveError}</Alert>}
+        </Stack>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, py: 2 }}>
+        <Box sx={{ flex: 1 }} />
+        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={onSave}>
+          Ок
+        </Button>
+        <Button type="button" variant="outlined" startIcon={<Close fontSize="small" />} onClick={onClose}>
+          Отмена
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

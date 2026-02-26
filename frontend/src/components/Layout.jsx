@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
+import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
-import '../styles/Layout.css'
 
 function Layout({ children }) {
   const navigate = useNavigate()
@@ -12,22 +12,28 @@ function Layout({ children }) {
   }
 
   return (
-    <div className="layout">
-      <header className="layout-header">
-        <h1 className="layout-title">Патрубки</h1>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AppBar position="sticky" elevation={0}>
+        <Toolbar sx={{ justifyContent: 'space-between', gap: 2 }}>
+          <Typography variant="h6" component="h1" sx={{ fontWeight: 600 }}>
+            Патрубки
+          </Typography>
         {user && (
-          <div className="layout-header-actions">
-            <span className="layout-user">{user.username}</span>
-            <button type="button" className="layout-logout" onClick={handleLogout}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+              {user.username}
+            </Typography>
+            <Button type="button" color="inherit" variant="outlined" onClick={handleLogout}>
               Выйти
-            </button>
-          </div>
+            </Button>
+          </Box>
         )}
-      </header>
-      <main className="layout-main">
+        </Toolbar>
+      </AppBar>
+      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, p: 3 }}>
         {children}
-      </main>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

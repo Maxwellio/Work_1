@@ -1,17 +1,17 @@
+import { Box } from '@mui/material'
 import HomeModals from '../components/HomeModals'
 import HomeToolbar from '../components/HomeToolbar'
 import HomeTable from '../components/HomeTable'
 import HomeTabs from '../components/HomeTabs'
 import { useHomePage } from '../hooks/useHomePage'
 import { formatCell, getRowId } from '../utils/format'
-import '../styles/Home.css'
 
 function Home() {
   const home = useHomePage()
   const { activeTab, data, actions } = home
 
   return (
-    <div className="home">
+    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       <HomeToolbar
         activeTab={activeTab}
         searchQuery={home.searchQuery}
@@ -55,7 +55,7 @@ function Home() {
         hydrotestForm={home.hydrotestForm}
         transitionsRef={home.transitionsRef}
       />
-    </div>
+    </Box>
   )
 }
 

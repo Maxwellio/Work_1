@@ -1,6 +1,19 @@
 import Check from '@mui/icons-material/Check'
 import Close from '@mui/icons-material/Close'
-import '../styles/SubstituteModal.css'
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 
 function FittingModal({
   open,
@@ -27,172 +40,124 @@ function FittingModal({
     : 'Переходы при изготовлении трубы'
 
   return (
-    <div
-      className="home-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="home-fitting-modal-title"
-      title={isEditMode ? titleEdit : titleAdd}
-    >
-      <div className="home-modal__backdrop" onClick={onClose} />
-      <div className="home-modal__panel" onClick={(e) => e.stopPropagation()}>
-        <div className="home-modal__header">
-          <h2 id="home-fitting-modal-title" className="home-modal__title">
-            {isEditMode ? titleEdit : titleAdd}
-          </h2>
-          <button
-            type="button"
-            className="home-modal__close"
-            onClick={onClose}
-            aria-label="Закрыть"
-          >
-            ×
-          </button>
-        </div>
-        <div className="home-modal__subheader">
-          <span className="home-modal__subheader-label">{label}</span>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" aria-labelledby="home-fitting-modal-title">
+      <DialogTitle id="home-fitting-modal-title" sx={{ pr: 6 }}>
+        {isEditMode ? titleEdit : titleAdd}
+        <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>
+          <Close />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{label}</Typography>
           {isEditMode && (
-            <span className="home-modal__id" aria-hidden="true">
+            <Typography variant="body2" color="text.secondary">
               {selectedRowId}
-            </span>
+            </Typography>
           )}
-        </div>
+          </Box>
 
-        <div className="home-modal__body">
-          <div className="home-modal__section">
-            <div className="home-modal__name-row">
-              <span className="home-modal__name-label">Наименование</span>
-              <div className="home-modal__name-inputs">
-                <input
-                  type="text"
-                  className="home-modal__name-inp"
-                  value={formData.nm}
-                  onChange={onFormChange('nm')}
-                  aria-label="nm"
-                />
-                <span className="home-modal__name-sep">-</span>
-                <input
-                  type="number"
-                  className="home-modal__name-inp"
-                  value={formData.d}
-                  onChange={onFormChange('d')}
-                  aria-label="d"
-                />
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+            <Typography variant="body2">Наименование</Typography>
+            <TextField size="small" value={formData.nm} onChange={onFormChange('nm')} sx={{ width: 160 }} />
+            <Typography color="text.secondary">-</Typography>
+            <TextField
+              type="number"
+              size="small"
+              value={formData.d}
+              onChange={onFormChange('d')}
+              sx={{ width: 110 }}
+            />
                 {isPatrubok && (
                   <>
-                    <span className="home-modal__name-sep">x</span>
-                    <input
+                <Typography color="text.secondary">x</Typography>
+                <TextField
                       type="number"
-                      className="home-modal__name-inp"
+                      size="small"
                       value={formData.th}
                       onChange={onFormChange('th')}
-                      aria-label="th"
+                      sx={{ width: 110 }}
                     />
                   </>
                 )}
-              </div>
-            </div>
+          </Stack>
 
-            <label className="home-modal__field">
-              <span>Длина, мм</span>
-              <input
-                type="number"
-                value={formData.l}
-                onChange={onFormChange('l')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Масса, кг</span>
-              <input
-                type="number"
-                value={formData.mass}
-                onChange={onFormChange('mass')}
-              />
-            </label>
+          <TextField label="Длина, мм" type="number" size="small" value={formData.l} onChange={onFormChange('l')} />
+          <TextField label="Масса, кг" type="number" size="small" value={formData.mass} onChange={onFormChange('mass')} />
 
             {isPatrubok && (
               <>
-                <h3 className="home-modal__section-title">Заготовка</h3>
-                <label className="home-modal__field">
-                  <span>Наименование</span>
-                  <select value={formData.idPreform} onChange={onFormChange('idPreform')}>
-                    <option value="">Выберите тип</option>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, pt: 1 }}>Заготовка</Typography>
+            <TextField
+              select
+              label="Наименование"
+              size="small"
+              value={formData.idPreform}
+              onChange={onFormChange('idPreform')}
+              helperText={preformError || ''}
+            >
+              <MenuItem value="">Выберите тип</MenuItem>
                     {preformTypesFiltered.map((item) => (
-                      <option key={item.idPreform} value={item.idPreform}>
+                <MenuItem key={item.idPreform} value={item.idPreform}>
                         {item.nmPreform}
-                      </option>
+                </MenuItem>
                     ))}
-                  </select>
-                  {preformError && (
-                    <span className="home-modal__hint">{preformError}</span>
-                  )}
-                </label>
-                <label className="home-modal__field">
-                  <span>Длина, мм</span>
-                  <input
-                    type="number"
-                    value={formData.lPreform}
-                    onChange={onFormChange('lPreform')}
-                  />
-                </label>
+            </TextField>
+            <TextField
+              label="Длина, мм"
+              type="number"
+              size="small"
+              value={formData.lPreform}
+              onChange={onFormChange('lPreform')}
+            />
               </>
             )}
 
-            <label className="home-modal__field">
-              <span>Коэф. жесткости, ГПа</span>
-              <input
-                type="number"
-                value={formData.phPreform}
-                onChange={onFormChange('phPreform')}
-              />
-            </label>
-            <label className="home-modal__field">
-              <span>Наибольший диаметр изделия</span>
-              <input
-                type="number"
-                value={formData.dStan}
-                onChange={onFormChange('dStan')}
-              />
-            </label>
+          <TextField
+            label="Коэф. жесткости, ГПа"
+            type="number"
+            size="small"
+            value={formData.phPreform}
+            onChange={onFormChange('phPreform')}
+          />
+          <TextField
+            label="Наибольший диаметр изделия"
+            type="number"
+            size="small"
+            value={formData.dStan}
+            onChange={onFormChange('dStan')}
+          />
 
-            <label className="home-modal__field">
-              <span>Количество деталей в партии, шт.</span>
-              <select value={formData.cnt ?? ''} onChange={onFormChange('cnt')}>
-                <option value="">Выберите</option>
-                {partyList.map((item) => (
-                  <option key={item.colParty} value={item.colParty}>
-                    {item.colParty}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </div>
-
-        {saveError && (
-          <div className="home-modal__save-error" role="alert">
-            {saveError}
-          </div>
-        )}
-        <div className="home-modal__footer">
-          <button type="button" className="home-modal__btn home-modal__btn_outline">
-            {transitionsLabel}
-          </button>
-          <button type="button" className="home-modal__btn" onClick={onSave}>
-            <Check className="home-modal__btn-icon" fontSize="small" />
-            Ок
-          </button>
-          <button
-            type="button"
-            className="home-modal__btn home-modal__btn_secondary"
-            onClick={onClose}
+          <TextField
+            select
+            label="Количество деталей в партии, шт."
+            size="small"
+            value={formData.cnt ?? ''}
+            onChange={onFormChange('cnt')}
           >
-            <Close className="home-modal__btn-icon" fontSize="small" />
-            Отмена
-          </button>
-        </div>
-      </div>
-    </div>
+            <MenuItem value="">Выберите</MenuItem>
+                {partyList.map((item) => (
+              <MenuItem key={item.colParty} value={item.colParty}>
+                    {item.colParty}
+              </MenuItem>
+                ))}
+          </TextField>
+
+          {saveError && <Alert severity="error">{saveError}</Alert>}
+        </Stack>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, py: 2 }}>
+        <Button type="button" variant="outlined">{transitionsLabel}</Button>
+        <Box sx={{ flex: 1 }} />
+        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={onSave}>
+          Ок
+        </Button>
+        <Button type="button" variant="outlined" startIcon={<Close fontSize="small" />} onClick={onClose}>
+          Отмена
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

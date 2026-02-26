@@ -1,7 +1,17 @@
 import { useNavigate, Navigate } from 'react-router-dom'
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { useLogin } from '../hooks/useLogin'
-import '../styles/Login.css'
 
 /**
  * Страница входа: форма логин/пароль, вызов POST /api/login (form-urlencoded),
@@ -24,11 +34,16 @@ function Login() {
 
   if (!sessionChecked) {
     return (
-      <div className="login-page">
-        <div className="login-card">
-          <p className="login-hint">Проверка авторизации…</p>
-        </div>
-      </div>
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+        <Card sx={{ width: '100%', maxWidth: 360 }}>
+          <CardContent>
+            <Stack spacing={1.5} alignItems="center">
+              <CircularProgress size={24} />
+              <Typography color="text.secondary">Проверка авторизации...</Typography>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
     )
   }
 
@@ -37,42 +52,43 @@ function Login() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <h2 className="login-title">Вход</h2>
-        <form className="login-form" onSubmit={handleSubmit}>
-          <label className="login-label">
-            Логин
-            <input
-              type="text"
-              className="login-input"
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+      <Card sx={{ width: '100%', maxWidth: 360 }}>
+        <CardContent>
+          <Typography variant="h5" align="center" sx={{ mb: 3, fontWeight: 600 }}>
+            Вход
+          </Typography>
+          <Stack component="form" spacing={2} onSubmit={handleSubmit}>
+            <TextField
+              label="Логин"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               required
               disabled={submitting}
+              size="small"
             />
-          </label>
-          <label className="login-label">
-            Пароль
-            <input
+            <TextField
               type="password"
-              className="login-input"
+              label="Пароль"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
               disabled={submitting}
+              size="small"
             />
-          </label>
-          <p className="login-hint">Проверяйте вводимые данные</p>
-          {error && <p className="login-error" role="alert">{error}</p>}
-          <button type="submit" className="login-submit" disabled={submitting}>
-            {submitting ? 'Вход…' : 'Войти'}
-          </button>
-        </form>
-      </div>
-    </div>
+            <Typography variant="body2" color="text.secondary">
+              Проверяйте вводимые данные
+            </Typography>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Button type="submit" variant="contained" disabled={submitting}>
+              {submitting ? 'Вход...' : 'Войти'}
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+    </Box>
   )
 }
 

@@ -1,4 +1,5 @@
-import '../styles/Home.css'
+import Search from '@mui/icons-material/Search'
+import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material'
 
 function HomeToolbar({
   activeTab,
@@ -15,54 +16,80 @@ function HomeToolbar({
   onSearchChange,
 }) {
   return (
-    <div className="home-toolbar">
+    <Stack
+      direction="row"
+      spacing={1}
+      useFlexGap
+      sx={{
+        position: 'sticky',
+        top: { xs: 56, sm: 64 },
+        zIndex: 5,
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        py: 1.5,
+        px: 2,
+        mx: -3,
+        borderBottom: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+      }}
+    >
       {(activeTab === 0 || activeTab === 1 || activeTab === 2 || activeTab === 3) && (
         <>
-          <button type="button" className="home-toolbar-btn" onClick={onAdd}>
+          <Button type="button" variant="contained" onClick={onAdd}>
             Добавить
-          </button>
-          <button type="button" className="home-toolbar-btn" onClick={onEdit}>
+          </Button>
+          <Button type="button" variant="contained" onClick={onEdit}>
             Редактировать
-          </button>
+          </Button>
         </>
       )}
       {activeTab !== 3 && (
-        <button type="button" className="home-toolbar-btn" onClick={onTransitions}>
+        <Button type="button" variant="outlined" onClick={onTransitions}>
           Переходы по трубе
-        </button>
+        </Button>
       )}
-      <button type="button" className="home-toolbar-btn" onClick={onDelete}>
+      <Button type="button" variant="outlined" onClick={onDelete}>
         Удалить
-      </button>
-      <button type="button" className="home-toolbar-btn" onClick={onCalcNorms}>
+      </Button>
+      <Button type="button" variant="outlined" onClick={onCalcNorms}>
         Расчёт норм времени
-      </button>
-      <button type="button" className="home-toolbar-btn" onClick={onPrint}>
+      </Button>
+      <Button type="button" variant="outlined" onClick={onPrint}>
         Печать отчёта
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
-        className={`home-toolbar-btn ${showMyRecords ? 'home-toolbar-btn_active' : ''}`}
+        variant={showMyRecords ? 'contained' : 'outlined'}
         onClick={onToggleMyRecords}
       >
         Мои записи
-      </button>
-      <input
+      </Button>
+      <Box sx={{ flex: 1 }} />
+      <TextField
         type="search"
-        className="home-toolbar-search"
         placeholder="Поиск по записям"
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         aria-label="Поиск по записям"
+        size="small"
+        sx={{ minWidth: 240 }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search fontSize="small" />
+            </InputAdornment>
+          ),
+        }}
       />
-      <button
+      <Button
         type="button"
-        className="home-toolbar-btn"
+        variant="outlined"
         onClick={onOpenTransitionsRef}
       >
         Справочник переходов
-      </button>
-    </div>
+      </Button>
+    </Stack>
   )
 }
 
