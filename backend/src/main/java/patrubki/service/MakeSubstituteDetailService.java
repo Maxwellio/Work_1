@@ -42,7 +42,7 @@ public class MakeSubstituteDetailService {
     public Integer save(MakeSubstituteDetailSaveDto dto) {
         MakeSubstituteDetail entity;
         if (dto.getId() != null && repository.existsById(dto.getId())) {
-            entity = repository.getOne(dto.getId());
+            entity = repository.getReferenceById(dto.getId());
         } else {
             entity = new MakeSubstituteDetail();
         }
@@ -61,12 +61,12 @@ public class MakeSubstituteDetailService {
 
     private void mapSaveDtoToEntity(MakeSubstituteDetailSaveDto dto, MakeSubstituteDetail entity) {
         if (dto.getIdOperations() != null) {
-            entity.setIdOperations(operationStructureSprRepository.getOne(dto.getIdOperations()));
+            entity.setIdOperations(operationStructureSprRepository.getReferenceById(dto.getIdOperations()));
         } else {
             entity.setIdOperations(null);
         }
         if (dto.getIdSubstitutePrepared() != null) {
-            entity.setIdSubstitutePrepared(makeSubstituteMainRepository.getOne(dto.getIdSubstitutePrepared()));
+            entity.setIdSubstitutePrepared(makeSubstituteMainRepository.getReferenceById(dto.getIdSubstitutePrepared()));
         } else {
             entity.setIdSubstitutePrepared(null);
         }

@@ -6,11 +6,16 @@ function withBase(path) {
 
 export async function request(path, options = {}) {
   const { headers = {}, ...rest } = options
-  return fetch(withBase(path), {
+  const res = await fetch(withBase(path), {
     credentials: 'include',
     headers,
     ...rest,
   })
+  if (res.status === 401 && path !== '/login') {
+    window.location.replace('/login')
+    throw new Error('Session expired')
+  }
+  return res
 }
 
 export async function requestJson(path, options = {}) {

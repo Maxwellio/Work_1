@@ -43,7 +43,7 @@ public class FitingDetailService {
     public Integer save(FitingDetailSaveDto dto) {
         FitingDetail entity;
         if (dto.getId() != null && repository.existsById(dto.getId())) {
-            entity = repository.getOne(dto.getId());
+            entity = repository.getReferenceById(dto.getId());
         } else {
             entity = new FitingDetail();
         }
@@ -62,12 +62,12 @@ public class FitingDetailService {
 
     private void mapSaveDtoToEntity(FitingDetailSaveDto dto, FitingDetail entity) {
         if (dto.getIdOperations() != null) {
-            entity.setIdOperations(operationStructureSprRepository.getOne(dto.getIdOperations()));
+            entity.setIdOperations(operationStructureSprRepository.getReferenceById(dto.getIdOperations()));
         } else {
             entity.setIdOperations(null);
         }
         if (dto.getIdFiting() != null) {
-            entity.setIdFiting(fitingRepository.getOne(dto.getIdFiting()));
+            entity.setIdFiting(fitingRepository.getReferenceById(dto.getIdFiting()));
         } else {
             entity.setIdFiting(null);
         }

@@ -40,7 +40,7 @@ function HomeTable({
                 >
                   {columns.map((col) => (
                     <td key={col.key}>
-                      {formatCell(row[col.key])}
+                      {formatCell(col.getValue ? col.getValue(row) : row[col.key])}
                     </td>
                   ))}
                 </tr>
