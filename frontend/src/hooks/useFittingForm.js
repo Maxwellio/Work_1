@@ -49,31 +49,25 @@ export function useFittingForm({
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (submittedFormData = formData) => {
     setSaveError(null)
     const tip = activeTab === 1 ? 1 : 2
     const payload = {
       id: isEditMode ? selectedRowId : null,
       tip,
-      nm: formData.nm || null,
-      d: parseNum(formData.d),
-      th: tip === 1 ? parseNum(formData.th) : null,
-      l: parseNum(formData.l),
-      mass: parseNum(formData.mass),
+      nm: submittedFormData.nm || null,
+      d: parseNum(submittedFormData.d),
+      th: tip === 1 ? parseNum(submittedFormData.th) : null,
+      l: parseNum(submittedFormData.l),
+      mass: parseNum(submittedFormData.mass),
       idPreform:
-        tip === 1 && formData.idPreform !== '' && formData.idPreform != null
-          ? parseNum(formData.idPreform)
+        tip === 1 && submittedFormData.idPreform !== '' && submittedFormData.idPreform != null
+          ? parseNum(submittedFormData.idPreform)
           : null,
-      lPreform: tip === 1 ? parseNum(formData.lPreform) : null,
-      phPreform: parseNum(formData.phPreform),
-      dStan: parseNum(formData.dStan),
-      cnt: formData.cnt || null,
+      lPreform: tip === 1 ? parseNum(submittedFormData.lPreform) : null,
+      phPreform: parseNum(submittedFormData.phPreform),
+      dStan: parseNum(submittedFormData.dStan),
+      cnt: submittedFormData.cnt || null,
       ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {
@@ -97,7 +91,6 @@ export function useFittingForm({
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Check from '@mui/icons-material/Check'
 import Close from '@mui/icons-material/Close'
 import {
@@ -21,9 +22,21 @@ function HydrotestModal({
   formData,
   saveError,
   onClose,
-  onFormChange,
   onSave,
 }) {
+  const [localFormData, setLocalFormData] = useState(() => ({ ...formData }))
+
+  useEffect(() => {
+    if (open) {
+      setLocalFormData({ ...formData })
+    }
+  }, [formData, open])
+
+  const handleFormChange = (field) => (event) => {
+    const { value } = event.target
+    setLocalFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
   if (!open) return null
 
   const titleEdit = 'Редактирование гидроиспытания'
@@ -48,22 +61,27 @@ function HydrotestModal({
           )}
           </Box>
 
-          <TextField label="Наименование" type="text" size="small" value={formData.nh} onChange={onFormChange('nh')} />
-          <TextField label="Диаметр, мм" type="number" size="small" value={formData.d} onChange={onFormChange('d')} />
-          <TextField label="Толщина стенки, мм" type="number" size="small" value={formData.th} onChange={onFormChange('th')} />
-          <TextField label="Длина, мм" type="number" size="small" value={formData.l} onChange={onFormChange('l')} />
-          <TextField label="Время на испытание, сек" type="number" size="small" value={formData.testtime} onChange={onFormChange('testtime')} />
-          <TextField label="Масса, кг" type="number" size="small" value={formData.mass} onChange={onFormChange('mass')} />
-          <TextField label="Длина резьбовой поверхности 1, мм" type="number" size="small" value={formData.l1} onChange={onFormChange('l1')} />
-          <TextField label="Длина резьбовой поверхности 2, мм" type="number" size="small" value={formData.l2} onChange={onFormChange('l2')} />
-          <TextField label="Норма времени, чел.ч" type="number" size="small" value={formData.nv} InputProps={{ readOnly: true }} />
+          <TextField label="Наименование" type="text" size="small" value={localFormData.nh} onChange={handleFormChange('nh')} />
+          <TextField label="Диаметр, мм" type="number" size="small" value={localFormData.d} onChange={handleFormChange('d')} />
+          <TextField label="Толщина стенки, мм" type="number" size="small" value={localFormData.th} onChange={handleFormChange('th')} />
+          <TextField label="Длина, мм" type="number" size="small" value={localFormData.l} onChange={handleFormChange('l')} />
+          <TextField label="Время на испытание, сек" type="number" size="small" value={localFormData.testtime} onChange={handleFormChange('testtime')} />
+          <TextField label="Масса, кг" type="number" size="small" value={localFormData.mass} onChange={handleFormChange('mass')} />
+          <TextField label="Длина резьбовой поверхности 1, мм" type="number" size="small" value={localFormData.l1} onChange={handleFormChange('l1')} />
+          <TextField label="Длина резьбовой поверхности 2, мм" type="number" size="small" value={localFormData.l2} onChange={handleFormChange('l2')} />
+          <TextField label="Норма времени, чел.ч" type="number" size="small" value={localFormData.nv} InputProps={{ readOnly: true }} />
 
           {saveError && <Alert severity="error">{saveError}</Alert>}
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Box sx={{ flex: 1 }} />
-        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={onSave}>
+        <Button
+          type="button"
+          variant="contained"
+          startIcon={<Check fontSize="small" />}
+          onClick={() => onSave(localFormData)}
+        >
           Ок
         </Button>
         <Button type="button" variant="outlined" startIcon={<Close fontSize="small" />} onClick={onClose}>

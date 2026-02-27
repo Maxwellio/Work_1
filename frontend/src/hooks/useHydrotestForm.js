@@ -39,24 +39,18 @@ export function useHydrotestForm({
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (submittedFormData = formData) => {
     setSaveError(null)
     const payload = {
       id: isEditMode ? selectedRowId : null,
-      nh: formData.nh || null,
-      d: parseNum(formData.d),
-      th: parseNum(formData.th),
-      l: parseNum(formData.l),
-      testtime: parseNum(formData.testtime),
-      mass: parseNum(formData.mass),
-      l1: parseNum(formData.l1),
-      l2: parseNum(formData.l2),
+      nh: submittedFormData.nh || null,
+      d: parseNum(submittedFormData.d),
+      th: parseNum(submittedFormData.th),
+      l: parseNum(submittedFormData.l),
+      testtime: parseNum(submittedFormData.testtime),
+      mass: parseNum(submittedFormData.mass),
+      l1: parseNum(submittedFormData.l1),
+      l2: parseNum(submittedFormData.l2),
       ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {
@@ -80,7 +74,6 @@ export function useHydrotestForm({
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }

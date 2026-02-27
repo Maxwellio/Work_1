@@ -20,7 +20,7 @@ export function useSubstituteForm({
   const openAdd = () => {
     setSaveError(null)
     setIsEditMode(false)
-    setFormData(EMPTY_SUBSTITUTE_FORM)
+    setFormData({ ...EMPTY_SUBSTITUTE_FORM })
     setIsModalOpen(true)
   }
 
@@ -39,36 +39,30 @@ export function useSubstituteForm({
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => {
-      const next = { ...prev, [field]: value }
-      if (field === 'idPreform' && (value === '1' || value === 1)) {
-        next.dPreformIn = ''
-      }
-      return next
-    })
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (submittedFormData = formData) => {
     setSaveError(null)
     const payload = {
       id: isEditMode ? selectedRowId : null,
-      nmSub1: formData.nmSub1 || null,
-      nmSub2: formData.nmSub2 || null,
-      nmSub3: formData.nmSub3 || null,
-      nmSub4: formData.nmSub4 || null,
-      nmSub5: formData.nmSub5 || null,
-      dSubstituteOut: parseNum(formData.dSubstituteOut),
-      dSubstituteIn: parseNum(formData.dSubstituteIn),
-      lSubstiute: parseNum(formData.lSubstiute),
-      idPreform: formData.idPreform === '' || formData.idPreform == null ? 1 : parseNum(formData.idPreform),
-      dPreformOut: parseNum(formData.dPreformOut),
-      dPreformIn: formData.idPreform === '1' || formData.idPreform === 1 ? null : parseNum(formData.dPreformIn),
-      lPreform: parseNum(formData.lPreform),
-      ph: parseNum(formData.ph),
-      massPreform: parseNum(formData.massPreform),
+      nmSub1: submittedFormData.nmSub1 || null,
+      nmSub2: submittedFormData.nmSub2 || null,
+      nmSub3: submittedFormData.nmSub3 || null,
+      nmSub4: submittedFormData.nmSub4 || null,
+      nmSub5: submittedFormData.nmSub5 || null,
+      dSubstituteOut: parseNum(submittedFormData.dSubstituteOut),
+      dSubstituteIn: parseNum(submittedFormData.dSubstituteIn),
+      lSubstiute: parseNum(submittedFormData.lSubstiute),
+      idPreform:
+        submittedFormData.idPreform === '' || submittedFormData.idPreform == null
+          ? 1
+          : parseNum(submittedFormData.idPreform),
+      dPreformOut: parseNum(submittedFormData.dPreformOut),
+      dPreformIn:
+        submittedFormData.idPreform === '1' || submittedFormData.idPreform === 1
+          ? null
+          : parseNum(submittedFormData.dPreformIn),
+      lPreform: parseNum(submittedFormData.lPreform),
+      ph: parseNum(submittedFormData.ph),
+      massPreform: parseNum(submittedFormData.massPreform),
       ...(isEditMode ? {} : { idUserCreator: user?.userId ?? null }),
     }
     try {
@@ -92,7 +86,6 @@ export function useSubstituteForm({
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }
