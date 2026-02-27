@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
-import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -14,9 +13,7 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <Layout>
-                <Home />
-              </Layout>
+              <Home />
             </ProtectedRoute>
           }
         />

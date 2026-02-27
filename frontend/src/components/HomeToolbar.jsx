@@ -21,14 +21,10 @@ function HomeToolbar({
       spacing={1}
       useFlexGap
       sx={{
-        position: 'sticky',
-        top: { xs: 56, sm: 64 },
-        zIndex: 5,
         alignItems: 'center',
         flexWrap: 'wrap',
         py: 1.5,
-        px: 2,
-        mx: -3,
+        px: 0,
         borderBottom: 1,
         borderColor: 'divider',
         bgcolor: 'background.paper',

@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import Layout from '../components/Layout'
 import HomeModals from '../components/HomeModals'
 import HomeToolbar from '../components/HomeToolbar'
 import HomeTable from '../components/HomeTable'
@@ -10,8 +11,8 @@ function Home() {
   const home = useHomePage()
   const { activeTab, data, actions } = home
 
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+  const stickyContent = (
+    <>
       <HomeToolbar
         activeTab={activeTab}
         searchQuery={home.searchQuery}
@@ -26,36 +27,41 @@ function Home() {
         onToggleMyRecords={home.toggleMyRecords}
         onSearchChange={home.setSearchQuery}
       />
-
       <HomeTabs activeTab={activeTab} onChange={home.setActiveTab} />
+    </>
+  )
 
-      <HomeTable
-        columns={home.columns}
-        listData={data.listData}
-        activeTab={activeTab}
-        selectedRowId={data.selectedRowId}
-        loading={data.loading}
-        error={data.error}
-        getRowId={getRowId}
-        formatCell={formatCell}
-        onSelectRow={data.setSelectedRowId}
-      />
+  return (
+    <Layout stickyContent={stickyContent}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+        <HomeTable
+          columns={home.columns}
+          listData={data.listData}
+          activeTab={activeTab}
+          selectedRowId={data.selectedRowId}
+          loading={data.loading}
+          error={data.error}
+          getRowId={getRowId}
+          formatCell={formatCell}
+          onSelectRow={data.setSelectedRowId}
+        />
 
-      <HomeModals
-        activeTab={activeTab}
-        selectedRowId={data.selectedRowId}
-        preformTypesFiltered={data.preformTypesFiltered}
-        preformTypesFilteredFitting={data.preformTypesFilteredFitting}
-        preformError={data.preformError}
-        partyList={data.partyList}
-        isTransitionsRefModalOpen={home.isTransitionsRefModalOpen}
-        onCloseTransitionsRef={home.closeTransitionsRefModal}
-        substituteForm={home.substituteForm}
-        fittingForm={home.fittingForm}
-        hydrotestForm={home.hydrotestForm}
-        transitionsRef={home.transitionsRef}
-      />
-    </Box>
+        <HomeModals
+          activeTab={activeTab}
+          selectedRowId={data.selectedRowId}
+          preformTypesFiltered={data.preformTypesFiltered}
+          preformTypesFilteredFitting={data.preformTypesFilteredFitting}
+          preformError={data.preformError}
+          partyList={data.partyList}
+          isTransitionsRefModalOpen={home.isTransitionsRefModalOpen}
+          onCloseTransitionsRef={home.closeTransitionsRefModal}
+          substituteForm={home.substituteForm}
+          fittingForm={home.fittingForm}
+          hydrotestForm={home.hydrotestForm}
+          transitionsRef={home.transitionsRef}
+        />
+      </Box>
+    </Layout>
   )
 }
 
