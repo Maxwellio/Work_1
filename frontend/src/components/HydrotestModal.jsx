@@ -30,7 +30,7 @@ function HydrotestModal({
   const titleAdd = 'Добавление гидроиспытания'
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" aria-labelledby="home-hydrotest-modal-title">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="home-hydrotest-modal-title">
       <DialogTitle id="home-hydrotest-modal-title" sx={{ pr: 6 }}>
         {isEditMode ? titleEdit : titleAdd}
         <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>

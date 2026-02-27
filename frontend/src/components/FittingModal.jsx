@@ -40,7 +40,7 @@ function FittingModal({
     : 'Переходы при изготовлении трубы'
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" aria-labelledby="home-fitting-modal-title">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="home-fitting-modal-title">
       <DialogTitle id="home-fitting-modal-title" sx={{ pr: 6 }}>
         {isEditMode ? titleEdit : titleAdd}
         <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>

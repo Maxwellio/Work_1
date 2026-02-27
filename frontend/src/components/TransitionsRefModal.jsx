@@ -40,7 +40,14 @@ function TransitionsRefModal({
   const operationsSorted = [...operations].sort((a, b) => (a.idOperations ?? 0) - (b.idOperations ?? 0))
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg" aria-labelledby="transitions-ref-modal-title">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="lg"
+      aria-labelledby="transitions-ref-modal-title"
+      PaperProps={{ sx: { minHeight: { xs: '70vh', md: '78vh' } } }}
+    >
       <DialogTitle id="transitions-ref-modal-title" sx={{ pr: 6 }}>
         Справочник переходов
         <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>
@@ -48,10 +55,10 @@ function TransitionsRefModal({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ minHeight: 300 }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ minHeight: { xs: 360, md: 560 } }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Группа</Typography>
-            <TableContainer component={Paper} sx={{ maxHeight: 420 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: { xs: 300, md: 560 } }}>
               {loadingGroups && (
                 <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><CircularProgress size={24} /></Box>
               )}
@@ -85,7 +92,7 @@ function TransitionsRefModal({
 
           <Box sx={{ flex: 1.5, minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Операции</Typography>
-            <TableContainer component={Paper} sx={{ maxHeight: 420 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: { xs: 300, md: 560 } }}>
               {selectedGroupId == null && !loadingOperations && (
                 <Box sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>Выберите группу слева</Box>
               )}

@@ -34,7 +34,7 @@ function SubstituteModal({
       open={open}
       onClose={onClose}
       fullWidth
-      maxWidth="md"
+      maxWidth="sm"
       aria-labelledby="home-modal-title"
     >
       <DialogTitle id="home-modal-title" sx={{ pr: 6 }}>
