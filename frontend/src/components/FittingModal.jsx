@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Check from '@mui/icons-material/Check'
 import Close from '@mui/icons-material/Close'
 import {
@@ -19,16 +20,26 @@ function FittingModal({
   open,
   isEditMode,
   selectedRowId,
-  formData,
+  initialFormData,
   preformTypesFiltered,
   partyList,
   preformError,
   saveError,
   onClose,
-  onFormChange,
   onSave,
   tip,
 }) {
+  const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => {
+    if (open) setFormData(initialFormData)
+  }, [open, initialFormData])
+
+  const handleFormChange = (field) => (event) => {
+    const { value } = event.target
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
   if (!open) return null
 
   const isPatrubok = tip === 1
@@ -40,7 +51,7 @@ function FittingModal({
     : 'Переходы при изготовлении трубы'
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" aria-labelledby="home-fitting-modal-title">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="home-fitting-modal-title">
       <DialogTitle id="home-fitting-modal-title" sx={{ pr: 6 }}>
         {isEditMode ? titleEdit : titleAdd}
         <IconButton onClick={onClose} aria-label="Закрыть" sx={{ position: 'absolute', right: 12, top: 12 }}>
@@ -60,13 +71,13 @@ function FittingModal({
 
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
             <Typography variant="body2">Наименование</Typography>
-            <TextField size="small" value={formData.nm} onChange={onFormChange('nm')} sx={{ width: 160 }} />
+            <TextField size="small" value={formData.nm} onChange={handleFormChange('nm')} sx={{ width: 160 }} />
             <Typography color="text.secondary">-</Typography>
             <TextField
               type="number"
               size="small"
               value={formData.d}
-              onChange={onFormChange('d')}
+              onChange={handleFormChange('d')}
               sx={{ width: 110 }}
             />
                 {isPatrubok && (
@@ -76,15 +87,15 @@ function FittingModal({
                       type="number"
                       size="small"
                       value={formData.th}
-                      onChange={onFormChange('th')}
+                      onChange={handleFormChange('th')}
                       sx={{ width: 110 }}
                     />
                   </>
                 )}
           </Stack>
 
-          <TextField label="Длина, мм" type="number" size="small" value={formData.l} onChange={onFormChange('l')} />
-          <TextField label="Масса, кг" type="number" size="small" value={formData.mass} onChange={onFormChange('mass')} />
+          <TextField label="Длина, мм" type="number" size="small" value={formData.l} onChange={handleFormChange('l')} />
+          <TextField label="Масса, кг" type="number" size="small" value={formData.mass} onChange={handleFormChange('mass')} />
 
             {isPatrubok && (
               <>
@@ -94,7 +105,7 @@ function FittingModal({
               label="Наименование"
               size="small"
               value={formData.idPreform}
-              onChange={onFormChange('idPreform')}
+              onChange={handleFormChange('idPreform')}
               helperText={preformError || ''}
             >
               <MenuItem value="">Выберите тип</MenuItem>
@@ -109,7 +120,7 @@ function FittingModal({
               type="number"
               size="small"
               value={formData.lPreform}
-              onChange={onFormChange('lPreform')}
+              onChange={handleFormChange('lPreform')}
             />
               </>
             )}
@@ -119,14 +130,14 @@ function FittingModal({
             type="number"
             size="small"
             value={formData.phPreform}
-            onChange={onFormChange('phPreform')}
+            onChange={handleFormChange('phPreform')}
           />
           <TextField
             label="Наибольший диаметр изделия"
             type="number"
             size="small"
             value={formData.dStan}
-            onChange={onFormChange('dStan')}
+            onChange={handleFormChange('dStan')}
           />
 
           <TextField
@@ -134,7 +145,7 @@ function FittingModal({
             label="Количество деталей в партии, шт."
             size="small"
             value={formData.cnt ?? ''}
-            onChange={onFormChange('cnt')}
+            onChange={handleFormChange('cnt')}
           >
             <MenuItem value="">Выберите</MenuItem>
                 {partyList.map((item) => (
@@ -150,7 +161,7 @@ function FittingModal({
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button type="button" variant="outlined">{transitionsLabel}</Button>
         <Box sx={{ flex: 1 }} />
-        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={onSave}>
+        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={() => onSave(formData)}>
           Ок
         </Button>
         <Button type="button" variant="outlined" startIcon={<Close fontSize="small" />} onClick={onClose}>

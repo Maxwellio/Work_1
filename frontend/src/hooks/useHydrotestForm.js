@@ -14,13 +14,13 @@ export function useHydrotestForm({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [formData, setFormData] = useState(EMPTY_HYDROTEST_FORM)
+  const [initialFormData, setInitialFormData] = useState(EMPTY_HYDROTEST_FORM)
   const [saveError, setSaveError] = useState(null)
 
   const openAdd = () => {
     setSaveError(null)
     setIsEditMode(false)
-    setFormData({ ...EMPTY_HYDROTEST_FORM })
+    setInitialFormData({ ...EMPTY_HYDROTEST_FORM })
     setIsModalOpen(true)
   }
 
@@ -33,19 +33,13 @@ export function useHydrotestForm({
     if (!selectedRow) return
     setSaveError(null)
     setIsEditMode(true)
-    setFormData(mapHydrotestToForm(selectedRow))
+    setInitialFormData(mapHydrotestToForm(selectedRow))
     setIsModalOpen(true)
   }
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (formData) => {
     setSaveError(null)
     const hasName = formData.nh != null && String(formData.nh).trim() !== ''
     if (!hasName) {
@@ -80,12 +74,11 @@ export function useHydrotestForm({
   return {
     isModalOpen,
     isEditMode,
-    formData,
+    initialFormData,
     saveError,
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }

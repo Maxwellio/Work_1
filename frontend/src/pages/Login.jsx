@@ -78,7 +78,7 @@ function Login() {
               disabled={submitting}
               size="small"
             />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" align="center">
               Проверяйте вводимые данные
             </Typography>
             {error && <Alert severity="error">{error}</Alert>}

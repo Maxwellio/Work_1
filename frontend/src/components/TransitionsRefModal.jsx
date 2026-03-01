@@ -48,10 +48,10 @@ function TransitionsRefModal({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ minHeight: 300 }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ minHeight: 460 }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Группа</Typography>
-            <TableContainer component={Paper} sx={{ maxHeight: 420 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 560 }}>
               {loadingGroups && (
                 <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><CircularProgress size={24} /></Box>
               )}
@@ -85,7 +85,7 @@ function TransitionsRefModal({
 
           <Box sx={{ flex: 1.5, minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Операции</Typography>
-            <TableContainer component={Paper} sx={{ maxHeight: 420 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 560 }}>
               {selectedGroupId == null && !loadingOperations && (
                 <Box sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>Выберите группу слева</Box>
               )}

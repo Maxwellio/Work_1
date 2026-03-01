@@ -30,7 +30,7 @@ function Layout({ children }) {
         )}
         </Toolbar>
       </AppBar>
-      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, p: 3 }}>
+      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, pt: 0, px: 3, pb: 3 }}>
         {children}
       </Box>
     </Box>

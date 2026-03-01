@@ -14,6 +14,8 @@ export function useHomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showMyRecords, setShowMyRecords] = useState(false)
   const [isTransitionsRefModalOpen, setIsTransitionsRefModalOpen] = useState(false)
+  const [isSubstituteTransitionsModalOpen, setIsSubstituteTransitionsModalOpen] = useState(false)
+  const [transitionsMessage, setTransitionsMessage] = useState(null)
 
   const data = useHomeData({
     activeTab,
@@ -76,6 +78,17 @@ export function useHomePage() {
     else if (activeTab === 3) hydrotestForm.openEdit()
   }
 
+  const handleTransitions = () => {
+    if (activeTab === 0) {
+      if (data.selectedRowId == null) {
+        setTransitionsMessage('Выберите переводник в таблице')
+      } else {
+        setTransitionsMessage(null)
+        setIsSubstituteTransitionsModalOpen(true)
+      }
+    }
+  }
+
   return {
     activeTab,
     setActiveTab,
@@ -86,6 +99,11 @@ export function useHomePage() {
     isTransitionsRefModalOpen,
     openTransitionsRefModal: () => setIsTransitionsRefModalOpen(true),
     closeTransitionsRefModal: () => setIsTransitionsRefModalOpen(false),
+    isSubstituteTransitionsModalOpen,
+    closeSubstituteTransitionsModal: () => setIsSubstituteTransitionsModalOpen(false),
+    transitionsMessage,
+    clearTransitionsMessage: () => setTransitionsMessage(null),
+    handleTransitions,
     columns: COLUMNS[activeTab],
     data,
     actions,

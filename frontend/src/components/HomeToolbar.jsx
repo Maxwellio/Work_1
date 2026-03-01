@@ -21,17 +21,13 @@ function HomeToolbar({
       spacing={1}
       useFlexGap
       sx={{
-        position: 'sticky',
-        top: { xs: 56, sm: 64 },
-        zIndex: 5,
         alignItems: 'center',
         flexWrap: 'wrap',
-        py: 1.5,
+        pt: 1.5,
+        pb: 0,
         px: 2,
-        mx: -3,
         borderBottom: 1,
         borderColor: 'divider',
-        bgcolor: 'background.paper',
       }}
     >
       {(activeTab === 0 || activeTab === 1 || activeTab === 2 || activeTab === 3) && (
@@ -46,7 +42,7 @@ function HomeToolbar({
       )}
       {activeTab !== 3 && (
         <Button type="button" variant="outlined" onClick={onTransitions}>
-          Переходы по трубе
+          Переходы
         </Button>
       )}
       <Button type="button" variant="outlined" onClick={onDelete}>

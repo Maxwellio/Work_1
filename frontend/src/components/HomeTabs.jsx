@@ -5,14 +5,9 @@ function HomeTabs({ activeTab, onChange }) {
   return (
     <Box
       sx={{
-        position: 'sticky',
-        top: { xs: 132, sm: 140 },
-        zIndex: 4,
-        mx: -3,
         px: 3,
         borderBottom: 1,
         borderColor: 'divider',
-        bgcolor: 'background.paper',
       }}
     >
       <Tabs value={activeTab} onChange={(_, value) => onChange(value)} variant="scrollable" scrollButtons="auto">

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Check from '@mui/icons-material/Check'
 import Close from '@mui/icons-material/Close'
 import {
@@ -19,14 +20,30 @@ function SubstituteModal({
   open,
   isEditMode,
   selectedRowId,
-  formData,
+  initialFormData,
   preformTypesFiltered,
   preformError,
   saveError,
   onClose,
-  onFormChange,
   onSave,
 }) {
+  const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => {
+    if (open) setFormData(initialFormData)
+  }, [open, initialFormData])
+
+  const handleFormChange = (field) => (event) => {
+    const { value } = event.target
+    setFormData((prev) => {
+      const next = { ...prev, [field]: value }
+      if (field === 'idPreform' && (value === '1' || value === 1)) {
+        next.dPreformIn = ''
+      }
+      return next
+    })
+  }
+
   if (!open) return null
 
   return (
@@ -34,7 +51,7 @@ function SubstituteModal({
       open={open}
       onClose={onClose}
       fullWidth
-      maxWidth="md"
+      maxWidth="sm"
       aria-labelledby="home-modal-title"
     >
       <DialogTitle id="home-modal-title" sx={{ pr: 6 }}>
@@ -56,15 +73,15 @@ function SubstituteModal({
 
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
             <Typography variant="body2">Наименование</Typography>
-            <TextField size="small" value={formData.nmSub1} onChange={onFormChange('nmSub1')} sx={{ width: 110 }} />
+            <TextField size="small" value={formData.nmSub1} onChange={handleFormChange('nmSub1')} sx={{ width: 110 }} />
             <Typography color="text.secondary">-</Typography>
-            <TextField size="small" value={formData.nmSub2} onChange={onFormChange('nmSub2')} sx={{ width: 110 }} />
+            <TextField size="small" value={formData.nmSub2} onChange={handleFormChange('nmSub2')} sx={{ width: 110 }} />
             <Typography color="text.secondary">-</Typography>
-            <TextField size="small" value={formData.nmSub3} onChange={onFormChange('nmSub3')} sx={{ width: 110 }} />
+            <TextField size="small" value={formData.nmSub3} onChange={handleFormChange('nmSub3')} sx={{ width: 110 }} />
             <Typography color="text.secondary">/</Typography>
-            <TextField size="small" value={formData.nmSub4} onChange={onFormChange('nmSub4')} sx={{ width: 110 }} />
+            <TextField size="small" value={formData.nmSub4} onChange={handleFormChange('nmSub4')} sx={{ width: 110 }} />
             <Typography color="text.secondary">-</Typography>
-            <TextField size="small" value={formData.nmSub5} onChange={onFormChange('nmSub5')} sx={{ width: 110 }} />
+            <TextField size="small" value={formData.nmSub5} onChange={handleFormChange('nmSub5')} sx={{ width: 110 }} />
           </Stack>
 
           <TextField
@@ -72,21 +89,21 @@ function SubstituteModal({
             type="number"
             size="small"
             value={formData.dSubstituteOut}
-            onChange={onFormChange('dSubstituteOut')}
+            onChange={handleFormChange('dSubstituteOut')}
           />
           <TextField
             label="Диаметр внутренний переводника, мм"
             type="number"
             size="small"
             value={formData.dSubstituteIn}
-            onChange={onFormChange('dSubstituteIn')}
+            onChange={handleFormChange('dSubstituteIn')}
           />
           <TextField
             label="Длина, мм переводника"
             type="number"
             size="small"
             value={formData.lSubstiute}
-            onChange={onFormChange('lSubstiute')}
+            onChange={handleFormChange('lSubstiute')}
           />
 
           <Typography variant="subtitle1" sx={{ fontWeight: 600, pt: 1 }}>Заготовка</Typography>
@@ -96,7 +113,7 @@ function SubstituteModal({
             label="Наименование"
             size="small"
             value={formData.idPreform}
-            onChange={onFormChange('idPreform')}
+            onChange={handleFormChange('idPreform')}
             helperText={preformError || ''}
           >
             <MenuItem value="">Выберите тип</MenuItem>
@@ -111,14 +128,14 @@ function SubstituteModal({
             type="number"
             size="small"
             value={formData.dPreformOut}
-            onChange={onFormChange('dPreformOut')}
+            onChange={handleFormChange('dPreformOut')}
           />
           <TextField
             label="Диаметр внутренний заготовки, мм"
             type="number"
             size="small"
             value={formData.dPreformIn}
-            onChange={onFormChange('dPreformIn')}
+            onChange={handleFormChange('dPreformIn')}
             disabled={formData.idPreform === '1' || formData.idPreform === 1}
           />
           <TextField
@@ -126,21 +143,21 @@ function SubstituteModal({
             type="number"
             size="small"
             value={formData.lPreform}
-            onChange={onFormChange('lPreform')}
+            onChange={handleFormChange('lPreform')}
           />
           <TextField
             label="Коэф. жесткости, ГПа"
             type="number"
             size="small"
             value={formData.ph}
-            onChange={onFormChange('ph')}
+            onChange={handleFormChange('ph')}
           />
           <TextField
             label="Масса заготовки"
             type="number"
             size="small"
             value={formData.massPreform}
-            onChange={onFormChange('massPreform')}
+            onChange={handleFormChange('massPreform')}
           />
 
           {saveError && <Alert severity="error">{saveError}</Alert>}
@@ -151,7 +168,7 @@ function SubstituteModal({
           Переходы при изготовлении переводника
         </Button>
         <Box sx={{ flex: 1 }} />
-        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={onSave}>
+        <Button type="button" variant="contained" startIcon={<Check fontSize="small" />} onClick={() => onSave(formData)}>
           Ок
         </Button>
         <Button type="button" variant="outlined" startIcon={<Close fontSize="small" />} onClick={onClose}>
