@@ -1,6 +1,7 @@
 import FittingModal from './FittingModal'
 import HydrotestModal from './HydrotestModal'
 import SubstituteModal from './SubstituteModal'
+import SubstituteTransitionsModal from './SubstituteTransitionsModal'
 import TransitionsRefModal from './TransitionsRefModal'
 
 function HomeModals({
@@ -12,6 +13,10 @@ function HomeModals({
   partyList,
   isTransitionsRefModalOpen,
   onCloseTransitionsRef,
+  isSubstituteTransitionsModalOpen,
+  onCloseSubstituteTransitions,
+  idSubstitutePrepared,
+  substituteName,
   substituteForm,
   fittingForm,
   hydrotestForm,
@@ -23,12 +28,11 @@ function HomeModals({
         open={substituteForm.isModalOpen && activeTab === 0}
         isEditMode={substituteForm.isEditMode}
         selectedRowId={selectedRowId}
-        formData={substituteForm.formData}
+        initialFormData={substituteForm.initialFormData}
         preformTypesFiltered={preformTypesFiltered}
         preformError={preformError}
         saveError={substituteForm.saveError}
         onClose={substituteForm.close}
-        onFormChange={substituteForm.handleFormChange}
         onSave={substituteForm.handleSave}
       />
 
@@ -36,13 +40,12 @@ function HomeModals({
         open={fittingForm.isModalOpen && (activeTab === 1 || activeTab === 2)}
         isEditMode={fittingForm.isEditMode}
         selectedRowId={selectedRowId}
-        formData={fittingForm.formData}
+        initialFormData={fittingForm.initialFormData}
         preformTypesFiltered={preformTypesFilteredFitting}
         partyList={partyList}
         preformError={activeTab === 1 ? preformError : null}
         saveError={fittingForm.saveError}
         onClose={fittingForm.close}
-        onFormChange={fittingForm.handleFormChange}
         onSave={fittingForm.handleSave}
         tip={activeTab === 1 ? 1 : 2}
       />
@@ -51,11 +54,17 @@ function HomeModals({
         open={hydrotestForm.isModalOpen && activeTab === 3}
         isEditMode={hydrotestForm.isEditMode}
         selectedRowId={selectedRowId}
-        formData={hydrotestForm.formData}
+        initialFormData={hydrotestForm.initialFormData}
         saveError={hydrotestForm.saveError}
         onClose={hydrotestForm.close}
-        onFormChange={hydrotestForm.handleFormChange}
         onSave={hydrotestForm.handleSave}
+      />
+
+      <SubstituteTransitionsModal
+        open={isSubstituteTransitionsModalOpen && activeTab === 0}
+        onClose={onCloseSubstituteTransitions}
+        idSubstitutePrepared={idSubstitutePrepared}
+        substituteName={substituteName}
       />
 
       <TransitionsRefModal

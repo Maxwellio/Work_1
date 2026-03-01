@@ -32,3 +32,12 @@ export async function deleteSubstitute(id) {
     throw new Error(text || 'Ошибка удаления')
   }
 }
+
+export async function getSubstituteTransitions(idSubstitutePrepared) {
+  const res = await request(`/substitutes/${idSubstitutePrepared}/transitions`, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error(`getSubstituteTransitions failed: ${res.status}`)
+  return res.json()
+}

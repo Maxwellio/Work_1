@@ -22,7 +22,11 @@ public class MakeSubstituteDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_operations")
+<<<<<<< Updated upstream
     private OperationStructureSpr idOperations;
+=======
+    private OperationStructureSpr operation;
+>>>>>>> Stashed changes
 
     @Column(name = "seq_num_oper")
     private Integer seqNumOper;
@@ -36,9 +40,14 @@ public class MakeSubstituteDetail {
     @Column(name = "value_meas", precision = 19, scale = 2)
     private BigDecimal valueMeas;
 
+<<<<<<< Updated upstream
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_substitute_prepared")
     private MakeSubstituteMain idSubstitutePrepared;
+=======
+    @Column(name = "id_substitute_prepared")
+    private Integer idSubstitutePrepared;
+>>>>>>> Stashed changes
 
     @Column(name = "i")
     private Integer i;
@@ -67,9 +76,12 @@ public class MakeSubstituteDetail {
     @Column(name = "l_cur", precision = 19, scale = 2)
     private BigDecimal lCur;
 
+<<<<<<< Updated upstream
     @Column(name = "t_vp_nbdt", precision = 19, scale = 2)
     private BigDecimal tVpNbdt;
 
+=======
+>>>>>>> Stashed changes
     @Column(name = "id_user_creator")
     private Integer idUserCreator;
 
@@ -81,12 +93,24 @@ public class MakeSubstituteDetail {
         this.idMakeSubstitute = idMakeSubstitute;
     }
 
+<<<<<<< Updated upstream
     public OperationStructureSpr getIdOperations() {
         return idOperations;
     }
 
     public void setIdOperations(OperationStructureSpr idOperations) {
         this.idOperations = idOperations;
+=======
+    public Integer getIdOperations() {
+        return operation != null ? operation.getIdOperations() : null;
+    }
+
+    public void setIdOperations(Integer idOperations) {
+        if (operation == null) {
+            operation = new OperationStructureSpr();
+        }
+        operation.setIdOperations(idOperations);
+>>>>>>> Stashed changes
     }
 
     public Integer getSeqNumOper() {
@@ -121,11 +145,19 @@ public class MakeSubstituteDetail {
         this.valueMeas = valueMeas;
     }
 
+<<<<<<< Updated upstream
     public MakeSubstituteMain getIdSubstitutePrepared() {
         return idSubstitutePrepared;
     }
 
     public void setIdSubstitutePrepared(MakeSubstituteMain idSubstitutePrepared) {
+=======
+    public Integer getIdSubstitutePrepared() {
+        return idSubstitutePrepared;
+    }
+
+    public void setIdSubstitutePrepared(Integer idSubstitutePrepared) {
+>>>>>>> Stashed changes
         this.idSubstitutePrepared = idSubstitutePrepared;
     }
 
@@ -193,6 +225,7 @@ public class MakeSubstituteDetail {
         this.masCur = masCur;
     }
 
+<<<<<<< Updated upstream
     public BigDecimal getLCur() {
         return lCur;
     }
@@ -209,6 +242,16 @@ public class MakeSubstituteDetail {
         this.tVpNbdt = tVpNbdt;
     }
 
+=======
+    public BigDecimal getlCur() {
+        return lCur;
+    }
+
+    public void setlCur(BigDecimal lCur) {
+        this.lCur = lCur;
+    }
+
+>>>>>>> Stashed changes
     public Integer getIdUserCreator() {
         return idUserCreator;
     }
@@ -216,4 +259,15 @@ public class MakeSubstituteDetail {
     public void setIdUserCreator(Integer idUserCreator) {
         this.idUserCreator = idUserCreator;
     }
+<<<<<<< Updated upstream
+=======
+
+    public OperationStructureSpr getOperation() {
+        return operation;
+    }
+
+    public void setOperation(OperationStructureSpr operation) {
+        this.operation = operation;
+    }
+>>>>>>> Stashed changes
 }

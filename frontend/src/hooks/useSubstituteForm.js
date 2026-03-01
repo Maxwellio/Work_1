@@ -14,13 +14,13 @@ export function useSubstituteForm({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [formData, setFormData] = useState(EMPTY_SUBSTITUTE_FORM)
+  const [initialFormData, setInitialFormData] = useState(EMPTY_SUBSTITUTE_FORM)
   const [saveError, setSaveError] = useState(null)
 
   const openAdd = () => {
     setSaveError(null)
     setIsEditMode(false)
-    setFormData(EMPTY_SUBSTITUTE_FORM)
+    setInitialFormData(EMPTY_SUBSTITUTE_FORM)
     setIsModalOpen(true)
   }
 
@@ -33,25 +33,13 @@ export function useSubstituteForm({
     if (!selectedRow) return
     setSaveError(null)
     setIsEditMode(true)
-    setFormData(mapSubstituteToForm(selectedRow))
+    setInitialFormData(mapSubstituteToForm(selectedRow))
     setIsModalOpen(true)
   }
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => {
-      const next = { ...prev, [field]: value }
-      if (field === 'idPreform' && (value === '1' || value === 1)) {
-        next.dPreformIn = ''
-      }
-      return next
-    })
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (formData) => {
     setSaveError(null)
     const nameFields = [formData.nmSub1, formData.nmSub2, formData.nmSub3, formData.nmSub4, formData.nmSub5]
     const hasName = nameFields.some((v) => v != null && String(v).trim() !== '')
@@ -93,12 +81,11 @@ export function useSubstituteForm({
   return {
     isModalOpen,
     isEditMode,
-    formData,
+    initialFormData,
     saveError,
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }

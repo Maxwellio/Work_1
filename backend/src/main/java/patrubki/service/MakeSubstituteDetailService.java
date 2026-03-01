@@ -1,5 +1,6 @@
 package patrubki.service;
 
+<<<<<<< Updated upstream
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,15 @@ import patrubki.repository.MakeSubstituteDetailRepository;
 import patrubki.repository.MakeSubstituteMainRepository;
 import patrubki.repository.OperationStructureSprRepository;
 
+=======
+import org.springframework.stereotype.Service;
+import patrubki.dto.MakeSubstituteDetailDto;
+import patrubki.entity.MakeSubstituteDetail;
+import patrubki.entity.OperationStructureSpr;
+import patrubki.repository.MakeSubstituteDetailRepository;
+
+import java.math.BigDecimal;
+>>>>>>> Stashed changes
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +30,7 @@ import java.util.stream.Collectors;
 public class MakeSubstituteDetailService {
 
     private final MakeSubstituteDetailRepository repository;
+<<<<<<< Updated upstream
     private final MakeSubstituteMainRepository makeSubstituteMainRepository;
     private final OperationStructureSprRepository operationStructureSprRepository;
 
@@ -34,10 +45,20 @@ public class MakeSubstituteDetailService {
     @Transactional(readOnly = true)
     public List<MakeSubstituteDetailDto> findByIdSubstitutePreparedOrderBySeqNumOper(Integer idSubstitutePrepared) {
         return repository.findByIdSubstitutePrepared_IdSubstitutePreparedOrderBySeqNumOperAsc(idSubstitutePrepared).stream()
+=======
+
+    public MakeSubstituteDetailService(MakeSubstituteDetailRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<MakeSubstituteDetailDto> findBySubstitutePreparedId(Integer idSubstitutePrepared) {
+        return repository.findByIdSubstitutePreparedOrderBySeqNumOper(idSubstitutePrepared).stream()
+>>>>>>> Stashed changes
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
+<<<<<<< Updated upstream
     @Transactional
     public Integer save(MakeSubstituteDetailSaveDto dto) {
         MakeSubstituteDetail entity;
@@ -112,4 +133,40 @@ public class MakeSubstituteDetailService {
         dto.setIdUserCreator(e.getIdUserCreator());
         return dto;
     }
+=======
+    private MakeSubstituteDetailDto toDto(MakeSubstituteDetail e) {
+        MakeSubstituteDetailDto dto = new MakeSubstituteDetailDto();
+        dto.setSeqNumOper(e.getSeqNumOper());
+        OperationStructureSpr op = e.getOperation();
+        dto.setNmOperations(op != null ? op.getNmOperations() : null);
+        dto.setD(e.getD());
+        dto.setlCalc(lCalc(e));
+        dto.setValueMeas(e.getValueMeas());
+        dto.setDepthCut(e.getDepthCut());
+        dto.setI(e.getI());
+        dto.setS(e.getS());
+        dto.setN(e.getN());
+        dto.setVRez(e.getVRez());
+        dto.setTMach(e.getTMach());
+        dto.setTVp(e.getTVp());
+        dto.setTSum(tSum(e.getTMach(), e.getTVp()));
+        return dto;
+    }
+
+    private static BigDecimal lCalc(MakeSubstituteDetail e) {
+        if (e.getL() != null) {
+            return e.getL();
+        }
+        return e.getlCur();
+    }
+
+    private static BigDecimal tSum(BigDecimal tMach, BigDecimal tVp) {
+        if (tMach == null && tVp == null) {
+            return null;
+        }
+        BigDecimal a = tMach != null ? tMach : BigDecimal.ZERO;
+        BigDecimal b = tVp != null ? tVp : BigDecimal.ZERO;
+        return a.add(b);
+    }
+>>>>>>> Stashed changes
 }

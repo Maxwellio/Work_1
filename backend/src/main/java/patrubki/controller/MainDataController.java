@@ -15,9 +15,13 @@ import patrubki.dto.FitingDetailNtkDto;
 import patrubki.dto.FitingDetailSaveDto;
 import patrubki.dto.FitingDto;
 import patrubki.dto.HydrotestDto;
+<<<<<<< Updated upstream
 import patrubki.dto.IdNtkRequestDto;
 import patrubki.dto.MakeSubstituteDetailDto;
 import patrubki.dto.MakeSubstituteDetailSaveDto;
+=======
+import patrubki.dto.MakeSubstituteDetailDto;
+>>>>>>> Stashed changes
 import patrubki.dto.MakeSubstituteMainDto;
 import patrubki.dto.NtkDto;
 import patrubki.dto.OperationStructureGroupDto;
@@ -46,6 +50,7 @@ import java.util.List;
 public class MainDataController {
 
     private final MakeSubstituteMainService substituteService;
+    private final MakeSubstituteDetailService substituteDetailService;
     private final FitingService fitingService;
     private final HydrotestService hydrotestService;
     private final PreformTypService preformTypService;
@@ -58,6 +63,7 @@ public class MainDataController {
     private final FitingDetailNtkService fitingDetailNtkService;
 
     public MainDataController(MakeSubstituteMainService substituteService,
+                              MakeSubstituteDetailService substituteDetailService,
                               FitingService fitingService,
                               HydrotestService hydrotestService,
                               PreformTypService preformTypService,
@@ -69,6 +75,7 @@ public class MainDataController {
                               MakeSubstituteDetailService makeSubstituteDetailService,
                               FitingDetailNtkService fitingDetailNtkService) {
         this.substituteService = substituteService;
+        this.substituteDetailService = substituteDetailService;
         this.fitingService = fitingService;
         this.hydrotestService = hydrotestService;
         this.preformTypService = preformTypService;
@@ -79,6 +86,11 @@ public class MainDataController {
         this.fitingDetailService = fitingDetailService;
         this.makeSubstituteDetailService = makeSubstituteDetailService;
         this.fitingDetailNtkService = fitingDetailNtkService;
+    }
+
+    @GetMapping("/substitutes/{id}/transitions")
+    public ResponseEntity<List<MakeSubstituteDetailDto>> getSubstituteTransitions(@PathVariable Integer id) {
+        return ResponseEntity.ok(substituteDetailService.findBySubstitutePreparedId(id));
     }
 
     @GetMapping("/substitutes")

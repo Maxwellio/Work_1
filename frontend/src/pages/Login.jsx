@@ -64,6 +64,7 @@ function Login() {
               required
               disabled={submitting}
             />
+<<<<<<< Updated upstream
           </label>
           <p className="login-hint">Проверяйте вводимые данные</p>
           {error && <p className="login-error" role="alert">{error}</p>}
@@ -73,6 +74,19 @@ function Login() {
         </form>
       </div>
     </div>
+=======
+            <Typography variant="body2" color="text.secondary" align="center">
+              Проверяйте вводимые данные
+            </Typography>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Button type="submit" variant="contained" disabled={submitting}>
+              {submitting ? 'Вход...' : 'Войти'}
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+    </Box>
+>>>>>>> Stashed changes
   )
 }
 

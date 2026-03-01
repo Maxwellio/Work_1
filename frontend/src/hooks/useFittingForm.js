@@ -19,7 +19,7 @@ export function useFittingForm({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [formData, setFormData] = useState(EMPTY_FITTING_FORM_PATRUBOK)
+  const [initialFormData, setInitialFormData] = useState(EMPTY_FITTING_FORM_PATRUBOK)
   const [saveError, setSaveError] = useState(null)
 
   const openAdd = () => {
@@ -30,7 +30,7 @@ export function useFittingForm({
     if (partyList.length > 0 && partyList[0]?.colParty) {
       initialForm.cnt = partyList[0].colParty
     }
-    setFormData(initialForm)
+    setInitialFormData(initialForm)
     setIsModalOpen(true)
   }
 
@@ -43,19 +43,13 @@ export function useFittingForm({
     if (!selectedRow) return
     setSaveError(null)
     setIsEditMode(true)
-    setFormData(mapFittingToForm(selectedRow))
+    setInitialFormData(mapFittingToForm(selectedRow))
     setIsModalOpen(true)
   }
 
   const close = () => setIsModalOpen(false)
 
-  const handleFormChange = (field) => (event) => {
-    const { value } = event.target
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setSaveError(null)
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (formData) => {
     setSaveError(null)
     const tip = activeTab === 1 ? 1 : 2
     const hasNm = formData.nm != null && String(formData.nm).trim() !== ''
@@ -97,12 +91,11 @@ export function useFittingForm({
   return {
     isModalOpen,
     isEditMode,
-    formData,
+    initialFormData,
     saveError,
     openAdd,
     openEdit,
     close,
-    handleFormChange,
     handleSave,
   }
 }

@@ -23,8 +23,14 @@ function Layout({ children }) {
             </button>
           </div>
         )}
+<<<<<<< Updated upstream
       </header>
       <main className="layout-main">
+=======
+        </Toolbar>
+      </AppBar>
+      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, pt: 0, px: 3, pb: 3 }}>
+>>>>>>> Stashed changes
         {children}
       </main>
     </div>
