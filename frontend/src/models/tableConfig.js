@@ -18,7 +18,7 @@ export const COLUMNS = {
   ],
   1: [
     { key: 'idFiting', label: '№' },
-    { key: 'nm', label: 'Наименование' },
+    { key: 'nm', label: 'Наименование', getValue: (row) => [row.nm, row.d, row.th].filter(v => v != null && v !== '').join('-') || row.nm },
     { key: 'd', label: 'D' },
     { key: 'th', label: 'Толщ.' },
     { key: 'mass', label: 'Масса' },
@@ -26,7 +26,7 @@ export const COLUMNS = {
   ],
   2: [
     { key: 'idFiting', label: '№' },
-    { key: 'nm', label: 'Наименование' },
+    { key: 'nm', label: 'Наименование', getValue: (row) => [row.nm, row.d].filter(v => v != null && v !== '').join('-') || row.nm },
     { key: 'd', label: 'D' },
     { key: 'th', label: 'Толщ.' },
     { key: 'mass', label: 'Масса' },

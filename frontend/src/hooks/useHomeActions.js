@@ -18,7 +18,15 @@ export function useHomeActions({
     if (!selectedRow) return
 
     const prefixes = { 0: 'переводник ', 1: 'патрубок ', 2: 'трубу ', 3: 'гидроиспытание ' }
-    const name = activeTab === 0 ? selectedRow.name : activeTab === 3 ? selectedRow.nh : selectedRow.nm
+    const name = activeTab === 0
+      ? selectedRow.name
+      : activeTab === 1
+        ? [selectedRow.nm, selectedRow.d, selectedRow.th].filter(v => v != null && v !== '').join('-') || selectedRow.nm
+        : activeTab === 2
+          ? [selectedRow.nm, selectedRow.d].filter(v => v != null && v !== '').join('-') || selectedRow.nm
+          : activeTab === 3
+            ? selectedRow.nh
+            : selectedRow.nm
     const message = `Вы уверены, что хотите удалить ${prefixes[activeTab] || ''}${name || ''}?`
     if (!window.confirm(message)) return
 

@@ -47,6 +47,11 @@ export function useHydrotestForm({
 
   const handleSave = async () => {
     setSaveError(null)
+    const hasName = formData.nh != null && String(formData.nh).trim() !== ''
+    if (!hasName) {
+      setSaveError('Заполните поле наименования')
+      return
+    }
     const payload = {
       id: isEditMode ? selectedRowId : null,
       nh: formData.nh || null,
