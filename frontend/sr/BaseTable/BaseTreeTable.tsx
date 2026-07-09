@@ -1,7 +1,6 @@
 import type { ColumnDef, VisibilityState } from "@tanstack/react-table";
 import { flexRender, getCoreRowModel, getExpandedRowModel, getPaginationRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
 import React, { useState } from "react";
-import '../../../../../tailwind.css';
 import { useFetchData } from "../BaseTable/hooks/useFetchTreeData";
 
 interface BaseTreeTableProps<TData> extends Partial<TableOptions<TData>>{
