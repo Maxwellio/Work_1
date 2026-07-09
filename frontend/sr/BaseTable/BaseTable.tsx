@@ -1,7 +1,6 @@
 import type { ColumnDef, SortingState, VisibilityState } from "@tanstack/react-table";
 import { flexRender, getCoreRowModel, getFacetedMinMaxValues, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import '../../../../../tailwind.css';
 import { DebouncedInput, DynamicDatePicker, DynamicSelect } from "../Input/InputComponents";
 import { FILTER_TYPES } from "../utils/types";
 import { useFetchData } from "./hooks/useFetchData";
