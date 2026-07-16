@@ -1,0 +1,78 @@
+const ProtectedLayout = () => {
+    //@ts-ignore
+    const { loading, isAuthenticated, user, checkAuth } = useContext(AuthContext);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (isAuthenticated && checkAuth) {
+            checkAuth();
+        }
+    }, [location.hash]);
+
+    if (loading) {
+        return null;
+    }
+
+    if (!isAuthenticated){
+        return <Navigate to="/login" replace/>;
+    }
+
+    return (
+        <div className="flex h-screen overflow-hidden bg-gray-100 ">
+            <div className="flex flex-col flex-1 overflow-hidden h-full">
+                <AppBar 
+                    position="static" 
+                    elevation={0} 
+                    sx={{ 
+                        bgcolor: 'white', 
+                        borderBottom: '1px solid #e5e7eb', 
+                        color: 'text.primary' 
+                    }}
+                >
+                    <Toolbar className="h-full" disableGutters sx={{ minHeight: '48px !important', px: 1 }}>
+                        <Navigation />
+                        <div className="text-left flex-1 pl-10">Расчет нормативной продолжительности ТКРС и ПНП - модуль ХОС</div>
+                        <div className="text-right flex-1 pl-10">{user.people}</div>
+                    </Toolbar>
+                </AppBar>
+                <main className="flex-1 min-h-0 flex flex-col h-full">
+                    <Outlet />
+                </main>
+                <div id="footer-portal-root" className="shrink-0"></div>
+            </div>
+
+        </div>
+    );
+}
+
+export const ApplicationRouter = () =>{
+    return (
+            <AuthProvider>
+                <Routes>
+                    <Route path="/login" element={<LoginForm/>}/>
+                    <Route path="/change-password" element={<ChangePasswordForm/>}/>
+                    <Route path="/activate" element={<ChangePasswordForm/>} />
+                    <Route element={<ProtectedLayout/>}>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/users" element={<UsersPage/>}/>
+                        <Route path="/catalog" element={<CatalogPage/>}/>
+                        <Route path="/narList" element={<NarListPage/>}/>
+                        <Route path="/brigadeList" element={<BrigadeListPage/>}/>
+                        <Route path="/nar/:id" element={<NarPage/>}/>
+                        <Route path="/reports" element={<ReportsPage/>}/>
+                        <Route path="*" element={<Navigate to="/"/>} />
+                    </Route>
+                </Routes>
+            </AuthProvider>
+    )
+}
+
+
+const menuItems = [
+        // {text: "Тем.Каталог", icon: <Home className="text-blue-500"/>, path: "/catalog", roles: ["admin", "user"]},
+        {text: "Наряды", icon: <Assignment className="text-blue-500"/>, path: "/narList", roles: ["99", "1"]},
+        {text: "Отчеты", icon: <Assessment className="text-blue-500"/>, path: "/reports", roles: ["99", "1"]},
+        {text: "Перечень бригад и мастеров", icon: <ViewList className="text-blue-500"/>, path: "/brigadeList", roles: ["99", "1"]},
+        {text: "Настройки", icon: <Settings className="text-blue-500"/>, subitem:[{text: "Пользователи", path: "/users"}], key : 'settings', roles: ["99"]},
+        {text: "Выход", icon: <Logout className="text-blue-500"/>, path: "/login", handler: () => {logout()}, roles: ["99", "1"]}
+    ];
