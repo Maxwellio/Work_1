@@ -1,0 +1,3 @@
+<DynamicDateList dates={dates} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/> 
+
+Данные отдавать так: {year: 2022, month: ["1", ...]}
