@@ -46,15 +46,17 @@ export const BaseTreeTable = <TData,>({url, columns, setSelectedId, setIsLeaf, d
             setExpanded(newExpanded);
         },
         manualPagination: true,
+        enableSubRowSelection: false,
         ...props,
     });
 
-    const handleRowClick = (rowId) => {
-        setSelectedRowId(selectedRowId === rowId ? null : rowId);
-        //@ts-expect-errors
-        setSelectedId(selectedRowId === rowId ? null : table.getRow(rowId).original.id);
-        //@ts-expect-error
-        setIsLeaf(selectedRowId === rowId ? null : !table.getRow(rowId).original.hasChildren);
+    const handleRowClick = (row) => {        
+        if (row.id){
+            if(setSelectedId){
+                setSelectedId(row.original.id);
+            }
+            setIsLeaf(!row.original.hasChildren);
+        }        
     };
     
     return(
@@ -65,7 +67,7 @@ export const BaseTreeTable = <TData,>({url, columns, setSelectedId, setIsLeaf, d
                         <tr key = {headerGroup.id}>
                             {headerGroup.headers.map(header => (
                                 <th key = {header.id}
-                                className="max-h-10 px-4 py-2 text-left text sm front-medium text-gray-700 border ">
+                                className=" px-1 py-2 text-center shrink-0 overflow-hidden text-ellipsis bg-[#F0F4FF] text-[#364FC7] border border-t font-medium text-sm whitespace-pre-line break-words hyphens-auto">
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                 </th>    
                             ))}
@@ -75,15 +77,22 @@ export const BaseTreeTable = <TData,>({url, columns, setSelectedId, setIsLeaf, d
             <tbody className="bg-white divide-y divide-gray-200">
                 {table.getRowModel().rows.map(row =>(
                     <tr key = {row.id} 
-                        className={`hover:bg-gray-50 transition-colors duration-150
-                                    ${selectedRowId === row.id
-                                    ? 'bg-blue-50 hover:bg-blue-100 border-1-4 border-1-blue-500'
-                                    : 'bg-white'}
-                                  `}
-                        onClick={() => handleRowClick(row.id)}
+                    className={`hover:bg-[#E7F0FF] transition-colors duration-150 
+                        ${row.getIsSelected()
+                        ? 'bg-[#D0EBFF] even:bg-[#D0EBFF] hover:bg-[#B1D7FF] shadow-[inset_3px_0_0_0_#364FC7]'
+                        : 'bg-white even:bg-[#F8FAFF]'}
+                    `}
+                        onClick={(e) => {
+                        if (!row.getIsSelected()){
+                            table.resetRowSelection();
+                        }
+                        row.toggleSelected(true);}}
                     >
                         {row.getVisibleCells().map(cell => (
-                            <td key = {cell.id} className="px-4 py-2 border text-sm text-gray-500 overflow-hedden overflow-ellipsis whitespase-nowrap">
+                            <td key = {cell.id} 
+                                onClick={() => handleRowClick(row)}
+                                className="px-4 py-2 border text-sm text-gray- overflow-hedden overflow-ellipsis whitespase-nowrap"
+                            >
                                 <div className="max-h-10 overflow-y-auto">{flexRender(cell.column.columnDef.cell, cell.getContext())} </div>
                             </td>
                         ))}
