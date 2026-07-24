@@ -12,9 +12,7 @@ export const useFetchData = <T,> (url:String, id:Number) => {
             setLoading(true);
             try {
                 const reqApi = `${url}/${id}`;
-                console.log(reqApi);
                 const data = (await api.get(reqApi)).data;
-                //console.log(Array.of(data));
                 setData(Array.of(data));
                 setError(null);
             } catch(err){
@@ -28,7 +26,6 @@ export const useFetchData = <T,> (url:String, id:Number) => {
 
     const fetchChildren = useCallback(async (parentId,) => {
         const reqApi = `${url}/${parentId}/children`;
-        console.log(reqApi);
         const children = (await api.get(reqApi)).data;
         setData(prev => {
             const updateNode = (nodes) =>{
