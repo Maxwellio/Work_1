@@ -1,5 +1,5 @@
-import { ExpandLess, ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, Checkbox, Collapse, FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Select, Switch, TextField, Tooltip, Typography } from "@mui/material";
+import { DateRange, ExpandLess, ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Checkbox, Collapse, FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Select, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { ClearIcon, DatePicker, DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -145,11 +145,12 @@ export const DynamicDatePicker = ({
             localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
             
         >
-            <div className="flex flex-row">
+            
                 <DateTimePicker 
                     {...props}
                     className="w-full py-2 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500" 
                     value={selectedDate}
+                    fullWidth
                     onChange={(e) => {
                         setSelectedDate(e); 
                         if (e && dayjs(e).isValid()) {
@@ -195,7 +196,7 @@ export const DynamicDatePicker = ({
                         },
                     }}
                 />
-            </div>
+            
         </LocalizationProvider>
     );
 }
@@ -229,28 +230,49 @@ export const DebouncedInput = ({
     ...props
 }: InputProps) => {
     const [value, setValue] = useState(initialValue);
-    const lastSentValueRef = useRef(initialValue);
+
+    const isFirstRender = useRef(true);
+    // const lastSentValueRef = useRef(initialValue);
+
+    // useEffect(() => {
+    //     if (initialValue !== lastSentValueRef.current) {
+    //         setValue(initialValue);
+    //         lastSentValueRef.current = initialValue;
+    //     }
+    // }, [initialValue]);
+
+    // useEffect(() => {
+    //     if (value === initialValue) return;
+
+    //     const timeout = setTimeout(() => {
+    //         lastSentValueRef.current = value;
+    //         onChange(value);
+    //     }, debounce);
+
+    //     return () => clearTimeout(timeout);
+    // }, [value, debounce, onChange, initialValue]);
 
     useEffect(() => {
-        if (initialValue !== lastSentValueRef.current) {
-            setValue(initialValue);
-            lastSentValueRef.current = initialValue;
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return; // Пропускаем первый рендер, так как стейт уже равен initialValue
         }
+        setValue(initialValue ?? '');
     }, [initialValue]);
 
     useEffect(() => {
-        if (value === initialValue) return;
+        if (value === initialValue) return; 
 
         const timeout = setTimeout(() => {
-            lastSentValueRef.current = value;
             onChange(value);
         }, debounce);
 
         return () => clearTimeout(timeout);
-    }, [value, debounce, onChange, initialValue]);
+
+    }, [value, debounce, onChange]);
 
     const handleClear = () => {
-        lastSentValueRef.current = '';
+        // lastSentValueRef.current = '';
         setValue('');
         onChange('');
     };
@@ -282,7 +304,8 @@ export const DebouncedInput = ({
                         </InputAdornment>
                     )
                 }}
-                onChange={(e)=>{setValue(e.target.value); onChange(e.target.value)}}
+                // onChange={(e)=>{setValue(e.target.value); onChange(e.target.value)}}
+                onChange={(e)=>{setValue(e.target.value)}}
                 sx={{
                     minWidth: 0,
                     flexShrink: 1,
@@ -371,8 +394,8 @@ interface DynamicSelectProps{
     size?,
     disabled?,
     emptyMenu?,
-    defaulValue?,
-    baseApi,
+    defaulValue?
+    selectFirst?
 }
 
 export const DynamicSelect = ({
@@ -385,28 +408,23 @@ export const DynamicSelect = ({
     emptyMenu = true,
     defaulValue = '',
     size="medium",
-    baseApi,
+    selectFirst= false,
     ...props
 } : DynamicSelectProps & HtmlHTMLAttributes<HTMLSelectElement>) => {
     const fetchParams = useMemo(() => (params), [JSON.stringify(params)])
-    const {content, loadingContent} = useFetchSelectContent<any>(baseApi, contentApi, fetchParams)
+    const {content, loadingContent} = useFetchSelectContent<any>(contentApi, fetchParams)
     const [selectedItem, setSelectedItem] = useState(initialValue);
 
     useEffect(() => {
         setSelectedItem(initialValue);
     }, [initialValue])
 
-    // useEffect(() => {
-    //     // Если данные загружены и текущего значения нет в списке
-    //     if (content.length > 0 && !content.find(item => String(item.id) ===  String(selectedItem))) { 
-    //         onChange(String(defaulValue))           
-    //         setSelectedItem(defaulValue);
-    //     }
-    // }, [content, selectedItem]);
     useEffect(() => {
         if (!content || content.length === 0) return;
-
-        if (selectedItem !== undefined && selectedItem !== null && selectedItem !== '') {
+        if (selectFirst && content[0].id) {
+            onChange(content[0].id);           
+            setSelectedItem(content[0].id);
+        } else if (selectedItem !== undefined && selectedItem !== null && selectedItem !== '') {
             const isItemInList = content.some(item => String(item.id) === String(selectedItem));
             if (!isItemInList) {
                 onChange(defaulValue);           
@@ -428,7 +446,7 @@ export const DynamicSelect = ({
                           } 
                       }}    
             >{label}</InputLabel>
-            {content.length > 0 && (
+            
                 <Select
                     value={content.some(item => String(item.id) === String(selectedItem)) ? selectedItem : defaulValue}
                     //value={selectedItem}
@@ -445,7 +463,7 @@ export const DynamicSelect = ({
                         <MenuItem key={item.id} value={item.id}>{item.nm}</MenuItem>
                     ))} 
                 </Select>
-            )}
+            
         </FormControl>
     )
 };
@@ -823,4 +841,46 @@ export const ReportSign = ({
             </div>
         </Box>
     )
+}
+
+export const ParameterSelector = ({items = [ {id: "createDateRange", label: "Дата создания"}, {id: "begDateRange", label: "Дата начала"}, {id: "endDateRange", label: "Дата окончания"}, ], activeParam, setActiveParam }) => {
+    const handleChange = (event, nextParam) => {
+        if (nextParam !== null) {
+            setActiveParam(nextParam);
+        }
+    };
+  
+    return (
+        <Box sx={{ mb: 2, width: '100%' }}>        
+            <ToggleButtonGroup
+                value={activeParam}
+                exclusive
+                onChange={handleChange}
+                orientation="vertical"
+                fullWidth
+                size="small"
+                sx={{
+                    '& .MuiToggleButton-root.Mui-selected': {
+                        color: '#1976d2',                 
+                        backgroundColor: '#D0EBFF',
+                        '&:hover': {
+                            backgroundColor: '#B1D7FF',
+                        },
+                    },
+                }}
+            >
+                {
+                    items.map((item) => {
+                        return (
+                            <ToggleButton value={item.id} sx={{justifyContent: "flex-start", textAlign: 'left', color: 'black'}}>
+                                <DateRange sx={{ mr: 1, fontSize: 18 }} />
+                                {item.label}
+                            </ToggleButton>
+                        )
+                    })
+                }
+                
+            </ToggleButtonGroup>
+        </Box>
+    );
 }
