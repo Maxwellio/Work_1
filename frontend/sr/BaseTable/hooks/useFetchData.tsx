@@ -35,8 +35,7 @@ export const useFetchData = <T,> (url:string, columnFilters: Record<string,any>,
                     size: pageSize,
                     ...newfilers
                 }
-                const reqApi = `${url}`;
-                console.log(reqApi, {...params});               
+                const reqApi = `${url}`;           
                 const data = (await api.get(reqApi, {params })).data;
                 
                 setTotal(data.totalPages);
@@ -50,7 +49,6 @@ export const useFetchData = <T,> (url:string, columnFilters: Record<string,any>,
                 setError(null);
             } catch(err){
                 if (axios.isCancel(err)) {
-                    console.log("Запрос отменен");
                 } else {
                     console.error(err.message);
                 }
@@ -62,7 +60,7 @@ export const useFetchData = <T,> (url:string, columnFilters: Record<string,any>,
 
         useEffect(() => {
             fetchData(pagination.pageSize, 0, columnFilters);
-        }, [JSON.stringify(columnFilters)]);
+        }, [JSON.stringify(columnFilters), reRenderSignal]);
 
         useEffect(() => {
             if (pagination.pageIndex > 0) {
@@ -77,14 +75,12 @@ export const useFetchData = <T,> (url:string, columnFilters: Record<string,any>,
                 return acc;
             }, {});
             
-            if (loading) return;
             setLoading(true);
             try {
                 const params = {
                     ...newfilers
                 }
-                const reqApi = `${url}`;
-                console.log(reqApi, {...params});             
+                const reqApi = `${url}`;            
                 const data = (await api.get(reqApi, {params})).data;                    
                 if (data.numberOfElements === 0){
                     return;
@@ -99,7 +95,7 @@ export const useFetchData = <T,> (url:string, columnFilters: Record<string,any>,
         };
         useEffect(() => {
             fetchData(columnFilters);   
-        }, [columnFilters, reRenderSignal])
+        }, [JSON.stringify(columnFilters), reRenderSignal])
     }
 
 
