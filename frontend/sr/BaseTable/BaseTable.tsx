@@ -12,7 +12,6 @@ export interface ColumnFilter<TData>{
  
 interface BaseTableProps<TData> extends Partial<TableOptions<TData>>{
     url: string;
-    baseUrl: string
     columns: ColumnDef<TData>[];
     filters?: ColumnFilter<TData>[];
     setFilters?: any;
@@ -27,7 +26,7 @@ interface BaseTableProps<TData> extends Partial<TableOptions<TData>>{
     org? 
 }
 
-export const BaseTable = <TData,>({url, baseUrl, columns, filters, setFilters, defColumnFilters, defColumnVisibility, setSelectedId, handleDoubleClick, setSelectedCol, pageable=false, disabled=false, reRenderSignal, org, ...props}: BaseTableProps<TData>) =>{
+export const BaseTable = <TData,>({url, columns, filters, setFilters, defColumnFilters, defColumnVisibility, setSelectedId, handleDoubleClick, setSelectedCol, pageable=false, disabled=false, reRenderSignal, org, ...props}: BaseTableProps<TData>) =>{
     const [sorting, setSorting] = useState<SortingState>([]);
     const {data, total, loading, pagination, hasMore, totalElements, setPagination, setData} = useFetchData<TData>(url, filters || [], pageable, reRenderSignal);
     const [rowSelection, setRowSelection] = useState({});
@@ -126,7 +125,6 @@ export const BaseTable = <TData,>({url, baseUrl, columns, filters, setFilters, d
         const observer = new IntersectionObserver(
             entries => {
                 if (entries[0].isIntersecting && table.getCanNextPage()){
-                    console.log("Следующая страница");
                     table.nextPage();
                 }
             },
@@ -140,37 +138,13 @@ export const BaseTable = <TData,>({url, baseUrl, columns, filters, setFilters, d
                 observer.unobserve(observerTarget.current)
             }
         }
-    }, [loading])
-    
-    // useEffect(() => { 
-    //     tableContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-    // }, [filters])
-    
+    }, [loading]) 
 
     return(
-        <div {...props} className="h-full flex flex-col bg-white rounded-xl shadow-lg border"
-            // отключение взаимодействия
-            style={{ 
-            pointerEvents: disabled ? 'none' : 'auto', 
-            opacity: disabled ? 0.8 : 1 
-          }}>
-            {/* <button 
-            onClick={() => exportToExcel(table)} 
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-            Выгрузить в Excel
-            </button> */}
-            {/* <div>
-                        <h3>Активные фильтры:</h3>
-                        {filters?.map(filter => (
-                            <span key={filter.id} className="filter-chip">
-                            Колонка {filter.id}: {String(filter.value)}
-                            </span>
-                        ))}
-                        </div> */}
+        <div {...props} className="h-full flex flex-col bg-white rounded-xl shadow-lg border">
             <div className="h-full w-full overflow-hidden flex flex-col ">
                 <div  ref={tableContainerRef} className="flex-1 overflow-y-auto custom-scrollbar min-w-0 min-h-0">
-                    <table className="min-w-full border-separate border-spacing-0 table-fixed border border-[#E9ECEF] max-h-full" style={{ ...columnSizeVars, width: table.getTotalSize()}}>
+                    <table className="min-w-full border-separate border-spacing-0 table-fixed border border-[#E9ECEF] max-h-full" style={{ ...columnSizeVars, width: table.getTotalSize(), pointerEvents: disabled ? 'none' : 'auto'}}>
                         <thead className="sticky top-0 bg-gray-100 text-white z-10">
                             {table.getHeaderGroups().map(headerGroup => (
                                     <tr key = {headerGroup.id}> 
@@ -217,7 +191,7 @@ export const BaseTable = <TData,>({url, baseUrl, columns, filters, setFilters, d
                                                     [header.column.getIsSorted() as string] ?? null}
                                                     {header.column.getCanFilter() ? (
                                                         <div>
-                                                            <Filter column={header.column} org={org} baseUrl={baseUrl}/>
+                                                            <Filter column={header.column} org={org}/>
                                                         </div>
                                                     ) : null}
 
@@ -288,30 +262,32 @@ export const BaseTable = <TData,>({url, baseUrl, columns, filters, setFilters, d
     );
 };
 
-function Filter({ column, org, baseUrl }) {
+function Filter({ column, org, }) {
     const [isPending, startTransition] = useTransition();
     const {filterVariant}  = column.columnDef.meta ?? {}
   
     const columnFilterValue = column.getFilterValue()
-    const handleFilterChange = (value: any) => {
+    const handleTextFilterChange = (value: any) => {
+        column.setFilterValue(value);
+    };
+    const handleSelectFilterChange = (value: any) => {
         startTransition(() => {
-          column.setFilterValue(value);
+            column.setFilterValue(value);
         });
-      };
+    };
 
     return filterVariant === FILTER_TYPES.SELECT ? (
         <DynamicSelect
             contentApi={column.columnDef.meta?.content}
             value={columnFilterValue?.toString()}
-            onChange={(value) => handleFilterChange(value)}
+            onChange={(value) => handleSelectFilterChange(value)}
             params={ column.columnDef.meta?.params ? {org} : '' }
             size={"small"}
-            baseApi={baseUrl}
         />
     ) : filterVariant === FILTER_TYPES.DATE ? (
         <DynamicDatePicker
             value={columnFilterValue}
-            onChange={(value) => handleFilterChange(value)}
+            onChange={(value) => handleSelectFilterChange(value)}
             views={['day', 'year', 'month']}
             format="dd.MM.yyyy" 
             isButtonHide={true}
@@ -321,7 +297,7 @@ function Filter({ column, org, baseUrl }) {
     ) : (
         <DebouncedInput
             value={(columnFilterValue ?? '') as string}
-            onChange={(value) => handleFilterChange(value)}
+            onChange={(value) => handleTextFilterChange(value)}
             allowClear={true}
             size={"small"}
         />
